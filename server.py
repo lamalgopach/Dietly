@@ -44,7 +44,7 @@ def show_recipe():
 	data = response.json()
 	
 	if response.ok:
-		recipe = data["hits"][0]["recipe"]
+		recipe = data["hits"][0]["recipe"]["dietLabels"]
 
 	return render_template("recipe.html", results=recipe)
 

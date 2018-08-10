@@ -1,5 +1,3 @@
-#i`VE COPIED from homework, but then analyzed very carefully
-
 from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
@@ -19,33 +17,14 @@ class Recipe(db.Model):
     recipe_image = db.Column(db.String)
     directions = db.Column(db.Text, nullable=False)#here will probably goes the url so text/string??? 
     servings = db.Column(db.Float, nullable=False) #default=2
-    diet_label = db.Column(db.String, nullable=False, default="Balanced") #low-carb, balanced, high-protein, low-fat, 
-    health_label= db.Column(db.String, nullable=False, default="Regular") #[ "Vegan", "Vegetarian", "Peanut-Free", "Tree-Nut-Free", "Alcohol-Free", Sugar-Conscious" ],
-    caution = db.Column(db.String, nullable=False, default="No cautions")#ALLERGIES #wheat, gluten, peanuts, tree-nuts, soy, egg, milk, shellfish
     calories = db.Column(db.Integer, nullable=False, default=0) #not sure about if nullable
     carbohydrates = db.Column(db.Integer, nullable=False) #not sure if nullable
     fat = db.Column(db.Integer, nullable=False) #not sure if nullable
     protein = db.Column(db.Integer, nullable=False) #not sure if nullable 
 
 
-
     def __repr__(self):
         return f"""<Recipe name={self.recipe_name}>"""
-
-
-# class Meal(db.Model):
-#     """Meal flag"""
-
-#     __tablename__ = "meals"
-
-#     meal_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
-#     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
-#     meal_flag = db.Column(db.String, nullable=False)
-
-#     recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=meal_id))
-
-    # def __repr__(self):
-    #     return f"""<Meal ID={self.meal_id}>"""
 
 
 class Ingredient(db.Model):
@@ -63,7 +42,7 @@ class Ingredient(db.Model):
 
 
 class RecipeIngredient(db.Model):
-    """Associate Table with Recipe and Ingredient"""#for sure is it associate?
+    """Middle table. Recipe and Ingredient"""
 
     __tablename__ = "recipes_and_ingredients" #naming??
 
@@ -73,18 +52,14 @@ class RecipeIngredient(db.Model):
     amount = db.Column(db.Integer, nullable=False)
 
     recipe = db.relationship("Recipe", backref=db.backref("recipes_and_ingredients", order_by=recipe_ingredient_id))
-    #I dont understand this line.
+
     ingredient = db.relationship("Ingredient", backref=db.backref("recipes_and_ingredients", order_by=recipe_ingredient_id))
-    #why name of class is str??
+
 
     def __repr__(self):
         return f"""<Recipe - Ingredient ID={self.recipe_ingredient_id}>""" #do I need more?    
 
 
-
-###############################################################################################################
-
-                            #USER#
 
 class User(db.Model):
     """User"""
@@ -103,7 +78,6 @@ class User(db.Model):
                     Last Name={self.lname}, Email={self.email}>"""
 
 
-
 class Plan(db.Model):
     """Plan"""
 
@@ -118,16 +92,14 @@ class Plan(db.Model):
     fat = db.Column(db.Float, nullable=False)
     protein = db.Column(db.Float, nullable=False)
 
-    user = db.relationship("User", backref=db.backref("users", order_by=plan_id))
+    user = db.relationship("User", backref=db.backref("plans", order_by=plan_id))
 
     def __repr__(self):
-        return f"""<Plan ID={self.plan_id}, User ID={self.user_id}, 
-                    Timestamp={self.timestamp}>"""#add plan name if necessary
-
+        return f"""<Plan ID={self.plan_id}>"""#add plan name if necessary
 
 
 class RecipePlan(db.Model):
-    """Recipes and Plan"""
+    """Associate table. Recipes and Plan"""
 
     __tablename__ = "recipes_and_plans"
 
@@ -139,8 +111,7 @@ class RecipePlan(db.Model):
     recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=recipe_plan_id))
 
     def __repr__(self):
-        return f"""<Recipe - Plan ID={self.recipe_plan_id}, Plan ID={self.plan_id}, 
-                    Recipe ID ={self.recipe_id}, Timestamp={self.timestamp}>"""
+        return f"""<Recipe - Plan ID={self.recipe_plan_id}>"""
 
 
 class Allergy(db.Model):
@@ -152,11 +123,11 @@ class Allergy(db.Model):
     allergy_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f"""<Allergy={self.allergy_name}, Allergy ID={self.allergy_id}>"""    
+        return f"""<Allergy ID={self.allergy_id}>"""    
 
 
 class UserAllergy(db.Model):
-    """List of user's allergies"""
+    """Associate table. List of user's allergies"""
 
     __tablename__ = "users_and_allergies"
 
@@ -168,35 +139,48 @@ class UserAllergy(db.Model):
     allergy = db.relationship("Allergy", backref=db.backref("allergies", order_by=user_allergy_id))
 
     def __repr__(self):
-        return f"""<User={self.user_id}, Allergy={self.allergy_id}>"""
+        return f"""<ID={self.user_allergy_id}>"""
 
 
+class Label(db.Model):
+    """List of diet and health labels."""
 
-########################not sure if diet class necessary. probably only in recipes.
+    __tablename__ = "labels"
 
-# class Diet(db.Model):
-#     """List of types of diet."""
+    label_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    label_name = db.Column(db.String, nullable=False)
 
-#     __tablename__ = "diets"
-
-#     diet_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
-#     diet_name = db.Column(db.String, nullable=False)
-
-#     def __repr__(self):
-#         return f"""<Diet={self.diet_name}, diet ID={self.diet_id}>"""    
+    def __repr__(self):
+        return f"""<Label ID={self.label_id}>"""    
 
 
-# class UserDiet(db.Model):
-#     """List of users' diets."""
+class UserLabel(db.Model):
+    """Middle table with users and labels."""
 
-#     __tablename__ = "users_diets"
+    __tablename__ = "users_labels"
 
-#     users_diet_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
-#     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-#     diet_id = db.Column(db.Integer, db.ForeignKey('diets.diet_id'))
+    user_label_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
+    label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
    
-#     user = db.relationship("User", backref=db.backref("users", order_by=user_allergy_id))
-#     diet = db.relationship("Diet", backref=db.backref("diets", order_by=user_diet_id))
+    user = db.relationship("User", backref=db.backref("users", order_by=user_label_id))
+    label = db.relationship("Label", backref=db.backref("labels", order_by=user_label_id))
 
-#     def __repr__(self):
-#         return f"""<User={self.user_id}, Diet={self.diet_id}>"""
+    def __repr__(self):
+        return f"""<ID={self.user_dhl_id}>"""
+
+
+class RecipeLabel(db.Model):
+    """Middle table. List of dhls in recipes."""
+
+    __tablename__ = "labels_in_recipes"
+
+    label_recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
+    label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
+   
+    recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=label_recipe_id))
+    label = db.relationship("Label", backref=db.backref("labels", order_by=label_recipe_id))
+
+    def __repr__(self):
+        return f"""<ID={self.label_recipe_id}>"""
