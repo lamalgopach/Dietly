@@ -6,6 +6,7 @@ db = SQLAlchemy()
 # model work, add a flag
 # dafault always with nullable False?
 
+#1
 class Recipe(db.Model):
     """Recipe"""
 
@@ -26,7 +27,7 @@ class Recipe(db.Model):
     def __repr__(self):
         return f"""<Recipe name={self.recipe_name}>"""
 
-
+#2
 class Ingredient(db.Model):
     """Ingredient"""    
 
@@ -40,7 +41,7 @@ class Ingredient(db.Model):
         return f"""<Ingredient ID={self.ingredient_id}, ingredient name={self.ingredient_name}>"""
 
 
-
+#3 middle #1
 class RecipeIngredient(db.Model):
     """Middle table. Recipe and Ingredient"""
 
@@ -60,7 +61,7 @@ class RecipeIngredient(db.Model):
         return f"""<Recipe - Ingredient ID={self.recipe_ingredient_id}>""" #do I need more?    
 
 
-
+#4
 class User(db.Model):
     """User"""
 
@@ -77,7 +78,7 @@ class User(db.Model):
         return f"""<User ID={self.user_id}, First name={self.fname}, 
                     Last Name={self.lname}, Email={self.email}>"""
 
-
+#5 associate
 class Plan(db.Model):
     """Plan"""
 
@@ -97,7 +98,7 @@ class Plan(db.Model):
     def __repr__(self):
         return f"""<Plan ID={self.plan_id}>"""#add plan name if necessary
 
-
+#6 middle #2
 class RecipePlan(db.Model):
     """Associate table. Recipes and Plan"""
 
@@ -113,7 +114,7 @@ class RecipePlan(db.Model):
     def __repr__(self):
         return f"""<Recipe - Plan ID={self.recipe_plan_id}>"""
 
-
+#7
 class Allergy(db.Model):
     """List of allergies"""
 
@@ -125,9 +126,9 @@ class Allergy(db.Model):
     def __repr__(self):
         return f"""<Allergy ID={self.allergy_id}>"""    
 
-
+#8 middle #2
 class UserAllergy(db.Model):
-    """Associate table. List of user's allergies"""
+    """Middle table. List of user's allergies"""
 
     __tablename__ = "users_and_allergies"
 
@@ -141,7 +142,7 @@ class UserAllergy(db.Model):
     def __repr__(self):
         return f"""<ID={self.user_allergy_id}>"""
 
-
+#9 middle #3
 class Label(db.Model):
     """List of diet and health labels."""
 
@@ -153,7 +154,7 @@ class Label(db.Model):
     def __repr__(self):
         return f"""<Label ID={self.label_id}>"""    
 
-
+#10 middle #4
 class UserLabel(db.Model):
     """Middle table with users and labels."""
 
@@ -169,11 +170,11 @@ class UserLabel(db.Model):
     def __repr__(self):
         return f"""<ID={self.user_dhl_id}>"""
 
-
+#11 middle #5
 class RecipeLabel(db.Model):
-    """Middle table. List of dhls in recipes."""
+    """Middle table. List of labels in recipes."""
 
-    __tablename__ = "labels_in_recipes"
+    __tablename__ = "labels_recipes"
 
     label_recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
@@ -184,3 +185,20 @@ class RecipeLabel(db.Model):
 
     def __repr__(self):
         return f"""<ID={self.label_recipe_id}>"""
+
+#12 middle #6
+
+class RecipeAllergy(db.Model):
+    """Middle table. List of allergies(cautions) in recipes."""
+
+    __tablename__ = "allergies_recipes"
+
+    allergy_recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
+    allergy_id = db.Column(db.Integer, db.ForeignKey('allergies.allergy_id'))
+   
+    recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=allergy_recipe_id))
+    allergy = db.relationship("Label", backref=db.backref("allergies", order_by=allergy_recipe_id))
+
+    def __repr__(self):
+        return f"""<ID={self.allergy_recipe_id}>"""
