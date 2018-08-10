@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+
+
+<h1> Do you have any of the following allergies? ;) </h1>
+<h2> If yes - check the box! :) </h2>
+<form action="/allergy" method="POST">
+	<br>
+	Allergies: 
+	<br>
+	<br>
+	<input type="checkbox", name="allergies", value="Gluten"> Gluten <br>
+	<input type="checkbox", name="allergies", value="Wheat"> Wheat <br>
+	<input type="checkbox", name="allergies", value="Tree-Nuts"> Tree-Nuts <br>
+	<input type="checkbox", name="allergies", value="Shellfish"> Shellfish <br>
+	<input type="checkbox", name="allergies", value="Soy"> Soy <br>
+	<br>
+	<input type="submit" value="Submit">
+</form>
+
+{% endblock %}

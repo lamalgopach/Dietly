@@ -2,8 +2,10 @@ from pprint import pformat
 import os
 
 import requests
-from flask import Flask, render_template, request, flash, redirect
+from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
+
+from model import db, User, connect_to_db
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -12,23 +14,6 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_ID = os.environ.get('EDAMAM_RECIPE_SEARCH_APPLI
 EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPLICATION_KEY')
 
 EDAMAM_URL = "https://api.edamam.com/search"
-
-
-@app.route("/")
-def homepage():
-	"""Show homepage"""
-
-	#if logged in - flash message: Succesfully logged in
-	#show options in form(nav menu):
-		# go to preferences 
-		# go to make a meal from your fridge
-
-	#if NOT logged in - flash message: You are not logged in
-	#show options:
-		# register
-		# log in
-
-	return render_template("homepage.html")
 
 @app.route("/show-recipe")
 def show_recipe():
@@ -48,35 +33,139 @@ def show_recipe():
 
 	return render_template("recipe.html", results=recipe)
 
-@app.route("/register-form")
+@app.route("/")
+def homepage():
+	"""Show homepage"""
+
+	#if logged in - flash message: Succesfully logged in
+	#show options in form(nav menu):
+		# go to preferences 
+		# go to make a meal from your fridge
+
+	#if NOT logged in - flash message: You are not logged in
+
+	return render_template("homepage.html")
+
+@app.route("/register")
 def register():
+	"""Show register form"""
+
+	return render_template("register_page.html")
+
+
+
+@app.route("/register", methods=["POST"])
+def register_form():
 	"""Register user if not in the database"""
+	#need to be continued and user should be added to the database
 
-	#make a form with fname, lname, email, password
-	# make a form for allergies
-	#make a submit
-	#check if email in database
-	#if yes flash message: user in database
+	fname=request.form.get("fname")
+	lname=request.form.get("lname")
+	email=request.form.get("email")
+	password=request.form.get("password")
+
+	new_user = fname
+
+	new_user = User(fname=fname, lname=lname, email=email, password=password)
+
+	# # if new_user:
+	# # 	flash("User already exists in our database!")
+	# # 	return ?
+
+	# db.session.add(new_user)
+	# db.session.commit()
+	# flash(f"User {fname} {lname} added to database.")
+	# return redirect(f"/users/{new_user.user_id}")
+
+
+	flash(f"User added to database.")
+	return redirect("/")
+
+
 	#redirect to login
-
 	#else: add user to database
 	#redirect to homepage
 	
 
+	# return render_template("allergies.html") add allergies option as OPTION to user
+	#eg in homepage
+
+# make a form for allergies -next route
+
+
+
+@app.route("/allergy")
+def show_allergy_form():
+	"""Redirect from homepage/registration form. Display checkbox with set of allergies."""
+
+	return render_template("allergies.html")
+
+@app.route("/allergy", methods=["POST"])
+def handle_allergy_form():
+	"""Handle user's allergies."""
+
+	# return render_template("users_allergies.html")
 	pass
+
+
+
+
+
 
 @app.route("/login")
 def login():
-	"""Login user"""
+	"""Show login form."""
+
+	return render_template("login_page.html")
+
+@app.route("/login", methods=["POST"])
+def login_form():
+	"""Login user."""
+
+	email=request.form["email"]
+	password=request.form["password"]
+
+	user = User.query.filter_by(email=email, password=password).first()
+
+	if not user:
+		flash("Not such user.")
+		return redirect("/login")
+
+	if user.password != password:
+		flash("Incorrect password!")
+		return redirect("/login")
+
+	session["user_id"] = user.user_id
+	flash("User logged in!")
+	return redirect("/")
+
+
+
+
+
+	# if new_user:
+	# 	flash("User already exists in our database!")
+	# 	return ?
+
+	# db.session.add(user)
+	# db.session.commit()
+	# flash(f"User {fname} {lname} logged to database.")
+	# return redirect(f"/users/{new_user.user_id}")
+
+
+	flash(f"User succesfully logged in.")
+	return redirect("/")
  
-	# form with email and password, SUBMIT
+
 	#get email and password 
 	#check if they in database
 	#if yes: homepage 1st option
 	#if no: homepage 2nd option
 
 
-	pass
+
+
+
 
 @app.route("/logout")
 def logout():
@@ -131,54 +220,59 @@ def display_breakfast_preferences():
 	pass
 
 
-# @app.route("/")
-# def create_meal_plan():
-# 	"""Based on users preferences search recipes."""
+@app.route("/")
+def create_meal_plan():
+	"""Based on users preferences search recipes."""
 
-# 	#the essence of the app
-# 	#how to get the recipes from db and sum (calories, macros,allergies)
-# 	#1. get all the recipes from db where allergies AND health label is the same as user`s preference
-# 	#2. Think about dinner/breakfast/lunch - do they have labels??
-# 	#3. Proportion of calories - br-lunch-dinner????
-# 	#....what will be next?
+	#the essence of the app
+	#how to get the recipes from db and sum (calories, macros,allergies)
+	#1. get all the recipes from db where allergies AND health label is the same as user`s preference
+	#2. Think about dinner/breakfast/lunch - do they have labels??
+	#3. Proportion of calories - br-lunch-dinner????
+	#....what will be next?
+	# sum a bunch of br+lunch+dinner
+	#check if sum is equal to users preferences
 
-# 	pass
+	pass
 
 
-# @app.route("/make-a-meal-from-fridge")
-# def make_a_meal():
-# 	"""Make a meal from your fridge"""
+@app.route("/make-a-meal-from-fridge")
+def make_a_meal():
+	"""Make a meal from your fridge"""
 
-# 	# make an html form
-# 	# put a checkbox with the ingredients
-# 	# put a submit button
-# 	# redirect to the route cooking route
+	# make an html form
+	# put a checkbox with the ingredients
+	# put a submit button
+	# redirect to the route cooking route
 
-# 	pass
+	pass
 
-# @app.route("/cook-a-meal-from-fridge")
-# def cook_a_meal():
+@app.route("/cook-a-meal-from-fridge")
+def cook_a_meal():
 
-# 	#get ingredients from the form
-# 	#search recepies from the database which have those ingredients
-# 	#list the recipes
-# 	#redirect to a form which listing recepies
+	#get ingredients from the form
+	#search recepies from the database which have those ingredients
+	#list the recipes
+	#redirect to a form which listing recepies
 
-# 	pass
+	pass
 
-# @app.route("/show-a-meal-from-fridge")
-# def show_meal():
+@app.route("/show-a-meal-from-fridge")
+def show_meal():
 
-# 	#I am not sure if I need this route
-# 	# make a form listing the recipes
-# 	#after clicking favorite recipe recirect to recipe url
-# 	#recipe url is in database as directions
+	#I am not sure if I need this route
+	# make a form listing the recipes
+	#after clicking favorite recipe recirect to recipe url
+	#recipe url is in database as directions
 
-# 	pass
+	pass
 
 if __name__ == "__main__":
 	app.debug = True
 	app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 	DebugToolbarExtension(app)
+	connect_to_db(app)
+
 	app.run(host='0.0.0.0', port=5000)
+
 

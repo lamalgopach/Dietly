@@ -12,7 +12,7 @@ class Recipe(db.Model):
 
     __tablename__ = "recipes"
     
-    recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_name = db.Column(db.String, nullable=False) #uniqueness 
     recipe_url = db.Column(db.String, nullable=False) 
     recipe_image = db.Column(db.String)
@@ -33,7 +33,7 @@ class Ingredient(db.Model):
 
     __tablename__ = "ingredients"
 
-    ingredient_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     ingredient_name = db.Column(db.String, nullable=False)
 
 
@@ -45,16 +45,16 @@ class Ingredient(db.Model):
 class RecipeIngredient(db.Model):
     """Middle table. Recipe and Ingredient"""
 
-    __tablename__ = "recipes_and_ingredients" #naming??
+    __tablename__ = "recipes_ingredients" #naming??
 
-    recipe_ingredient_id = db.Column(db.Integer, autoincrement=True, primaryKey=True) 
+    recipe_ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True) 
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id')) #why string?
     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'))
     amount = db.Column(db.Integer, nullable=False)
 
-    recipe = db.relationship("Recipe", backref=db.backref("recipes_and_ingredients", order_by=recipe_ingredient_id))
+    recipe = db.relationship("Recipe", backref=db.backref("recipes_ingredients", order_by=recipe_ingredient_id))
 
-    ingredient = db.relationship("Ingredient", backref=db.backref("recipes_and_ingredients", order_by=recipe_ingredient_id))
+    ingredient = db.relationship("Ingredient", backref=db.backref("recipes_ingredients", order_by=recipe_ingredient_id))
 
 
     def __repr__(self):
@@ -67,11 +67,11 @@ class User(db.Model):
 
     __tablename__ = "users"
 
-    user_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    user_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     fname = db.Column(db.String, nullable=False)
     lname = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
-    password = db.Column(db.String, nullable=False) #to revise
+    password = db.Column(db.String, nullable=False)
 
 
     def __repr__(self):
@@ -84,7 +84,7 @@ class Plan(db.Model):
 
     __tablename__ = "plans"
 
-    plan_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     plan_name = db.Column(db.String) #??????do I need? 
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # timestamp = db.Column(db.DateTime) #period of time??
@@ -102,14 +102,14 @@ class Plan(db.Model):
 class RecipePlan(db.Model):
     """Associate table. Recipes and Plan"""
 
-    __tablename__ = "recipes_and_plans"
+    __tablename__ = "recipes_plans"
 
-    recipe_plan_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    recipe_plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     plan_id = db.Column(db.Integer, db.ForeignKey('plans.plan_id'))
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
 
-    plan = db.relationship("Plan", backref=db.backref("plans", order_by=recipe_plan_id))
-    recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=recipe_plan_id))
+    plan = db.relationship("Plan", backref=db.backref("recipes_plans", order_by=recipe_plan_id))
+    recipe = db.relationship("Recipe", backref=db.backref("recipes_plans", order_by=recipe_plan_id))
 
     def __repr__(self):
         return f"""<Recipe - Plan ID={self.recipe_plan_id}>"""
@@ -120,7 +120,7 @@ class Allergy(db.Model):
 
     __tablename__ = "allergies"
 
-    allergy_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    allergy_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     allergy_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
@@ -132,12 +132,12 @@ class UserAllergy(db.Model):
 
     __tablename__ = "users_and_allergies"
 
-    user_allergy_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    user_allergy_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     allergy_id = db.Column(db.Integer, db.ForeignKey('allergies.allergy_id'))
    
-    user = db.relationship("User", backref=db.backref("users", order_by=user_allergy_id))
-    allergy = db.relationship("Allergy", backref=db.backref("allergies", order_by=user_allergy_id))
+    user = db.relationship("User", backref=db.backref("users_and_allergies", order_by=user_allergy_id))
+    allergy = db.relationship("Allergy", backref=db.backref("users_and_allergies", order_by=user_allergy_id))
 
     def __repr__(self):
         return f"""<ID={self.user_allergy_id}>"""
@@ -148,7 +148,7 @@ class Label(db.Model):
 
     __tablename__ = "labels"
 
-    label_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    label_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     label_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
@@ -160,15 +160,15 @@ class UserLabel(db.Model):
 
     __tablename__ = "users_labels"
 
-    user_label_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    user_label_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
    
-    user = db.relationship("User", backref=db.backref("users", order_by=user_label_id))
-    label = db.relationship("Label", backref=db.backref("labels", order_by=user_label_id))
+    user = db.relationship("User", backref=db.backref("users_labels", order_by=user_label_id))
+    label = db.relationship("Label", backref=db.backref("users_labels", order_by=user_label_id))
 
     def __repr__(self):
-        return f"""<ID={self.user_dhl_id}>"""
+        return f"""<ID={self.user_label_id}>"""
 
 #11 middle #5
 class RecipeLabel(db.Model):
@@ -176,12 +176,12 @@ class RecipeLabel(db.Model):
 
     __tablename__ = "labels_recipes"
 
-    label_recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    label_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
     label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
    
-    recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=label_recipe_id))
-    label = db.relationship("Label", backref=db.backref("labels", order_by=label_recipe_id))
+    recipe = db.relationship("Recipe", backref=db.backref("labels_recipes", order_by=label_recipe_id))
+    label = db.relationship("Label", backref=db.backref("labels_recipes", order_by=label_recipe_id))
 
     def __repr__(self):
         return f"""<ID={self.label_recipe_id}>"""
@@ -193,12 +193,32 @@ class RecipeAllergy(db.Model):
 
     __tablename__ = "allergies_recipes"
 
-    allergy_recipe_id = db.Column(db.Integer, autoincrement=True, primaryKey=True)
+    allergy_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
     allergy_id = db.Column(db.Integer, db.ForeignKey('allergies.allergy_id'))
    
-    recipe = db.relationship("Recipe", backref=db.backref("recipes", order_by=allergy_recipe_id))
-    allergy = db.relationship("Label", backref=db.backref("allergies", order_by=allergy_recipe_id))
+    recipe = db.relationship("Recipe", backref=db.backref("allergies_recipes", order_by=allergy_recipe_id))
+    allergy = db.relationship("Allergy", backref=db.backref("allergies_recipes", order_by=allergy_recipe_id))
 
     def __repr__(self):
         return f"""<ID={self.allergy_recipe_id}>"""
+
+
+
+
+def connect_to_db(app):
+    """Connect the database to our Flask app."""
+
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///user_mealplan'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['SQLALCHEMY_ECHO'] = True
+    db.app = app
+    db.init_app(app)
+
+if __name__ == "__main__":
+
+    from server import app
+
+    connect_to_db(app)
+    db.create_all()
+    print("Connected to DB.")

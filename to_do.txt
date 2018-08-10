@@ -1,3 +1,5 @@
 create db function
 workflow
 add recipes/allergy table
+
+make flash messages prettier
