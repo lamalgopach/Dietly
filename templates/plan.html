@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+
+
+<h1> Let's create a mealplan!;) </h1>
+
+
+	<form action="/plan" method="POST">
+		<h3> You can name your plan! </h3>
+		<input type="text" name="plan_name"><br><br>
+
+		<h2>How many calories do you want to eat per day?</h2>
+		<input type="number" name="calories" min=1400 max=4000 required><br><br>
+
+		<h5>How many percent of this would you like to spend on carbohydrates?</h5>
+		<input type="number" name="carbs" min=0 max=100 required><br><br>
+
+		<h5>What about fat?</h5>
+		<input type="number" name="fat" min=0 max=100 required><br><br>
+		
+		<h5>And proteins?</h5>
+		<input type="number" name="protein" min=0 max=100 required><br><br>
+		
+		<input type="submit" value="Submit">
+	</form>
+
+
+{% endblock %}	

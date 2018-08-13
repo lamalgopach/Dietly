@@ -85,7 +85,7 @@ class Plan(db.Model):
     __tablename__ = "plans"
 
     plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    plan_name = db.Column(db.String) #??????do I need? 
+    plan_name = db.Column(db.String, nullable=False, default="plan") #??????do I need? 
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     # timestamp = db.Column(db.DateTime) #period of time??
     calories = db.Column(db.Float, nullable=False)

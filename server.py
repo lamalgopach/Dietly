@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, connect_to_db
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -43,6 +43,10 @@ def homepage():
 		# go to make a meal from your fridge
 
 	#if NOT logged in - flash message: You are not logged in
+	if "user_id" in session:
+		print(session)
+		# show logout button
+
 
 	return render_template("homepage.html")
 
@@ -66,20 +70,17 @@ def register_form():
 	new_user = User(fname=fname, lname=lname, email=email, password=password)
 	user = User.query.filter_by(fname=fname, lname=lname, email=email, password=password).first()
 
-	if new_user.email == user.email:
-		flash("User already exists in our database!")
+	if user is not None:
+		flash(f"User {user.fname} {user.lname} already exists in our database!")
 		return redirect("/")
 	else:
 		db.session.add(new_user)
 
 	db.session.commit()
-	# flash(f"User {fname} {lname} added to database.")
-	# return redirect(f"/users/{new_user.user_id}")
-
+	flash(f"User {new_user.fname} {new_user.lname} succesfully added to the database!")
 
 	session["new_user_id"] = new_user.user_id
 
-	flash(f"User added to database.")
 	return redirect("/allergy")
 
 @app.route("/allergy")
@@ -87,7 +88,6 @@ def show_allergy_form():
 	"""Redirect from homepage/registration form. Display checkbox with set of allergies."""
 
 	return render_template("allergies.html")
-
 
 
 @app.route("/allergy", methods=["POST"])
@@ -111,7 +111,6 @@ def handle_allergy_form():
 
 	soy = request.form.get("allergen5")
 	allergens.append(soy)
-	print(gluten, wheat)
 
 	user_id = session["new_user_id"]
 
@@ -155,13 +154,13 @@ def login_form():
 	email=request.form["email"]
 	password=request.form["password"]
 
-	user = User.query.filter_by(email=email, password=password).first()
+	user = User.query.filter_by(email=email).first()
 
-	if not user:
+	if not email:
 		flash("Not such user.")
 		return redirect("/login")
 
-	if user.password != password:
+	elif user.password != password:
 		flash("Incorrect password!")
 		return redirect("/login")
 
@@ -169,49 +168,85 @@ def login_form():
 	flash("User logged in!")
 	return redirect("/")
 
-
-	# if new_user:
-	# 	flash("User already exists in our database!")
-	# 	return ?
-
-	# db.session.add(user)
-	# db.session.commit()
-	# flash(f"User {fname} {lname} logged to database.")
 	# return redirect(f"/users/{new_user.user_id}")
 
 
 	flash(f"User succesfully logged in.")
 	return redirect("/")
- 
 
-	#get email and password 
-	#check if they in database
-	#if yes: homepage 1st option
-	#if no: homepage 2nd option
 
-@app.route("/options-calories")
+
+
+
+@app.route("/plan")
 def user_options():
 	"""Show users options"""
 
-	return render_template("options_calories.html")
+	return render_template("plan.html")
 
-@app.route("/options-calories", methods=["POST"])
-def user_calories():
-	"""Get the calories."""
+@app.route("/plan", methods=["POST"])
+def user_preferences():
+	"""Get the preferences."""
 
+	plan_name = request.form.get("plan_name")
+	user_id = session["user_id"]
 	calories = request.form.get("calories")
+	carbohydrates = request.form.get("carbs")
+	fat = request.form.get("fat")
+	protein = request.form.get("protein")
+
+	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	db.session.add(new_plan)
+	db.session.commit()
+
+	return render_template("homepage.html")
+
+
+
+	#add pref to the db
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 @app.route("/logout")
 def logout():
-	"""Logout user"""
-	# remember about adding a session
+    """Log out user."""
+
+    del session["user_id"]
+    flash("Logged Out.")
+    return redirect("/")
+
 	# add a button Log Out
 	# jquery
-
-	pass
 
 @app.route("/design-your-meal-plan")
 def design_meal_plan():
