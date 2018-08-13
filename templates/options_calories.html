@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+
+
+<h1> Let's create a mealplan!;) </h1>
+
+<h2>How many calories do you want to eat per day?</h2>
+	<form action="/options" method="POST">
+		<input type="number" name="quantity">
+	</form>
+
+
+{% endblock %}	

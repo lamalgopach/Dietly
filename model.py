@@ -209,7 +209,7 @@ class RecipeAllergy(db.Model):
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///user_mealplan'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///mealplan'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_ECHO'] = True
     db.app = app

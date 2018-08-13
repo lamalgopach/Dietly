@@ -1,5 +1,10 @@
-create db function
-workflow
-add recipes/allergy table
+create db function (without working with interactive mode)
+
+
+
+
+
+done:
+stored allergies- new_users connection
 
 make flash messages prettier

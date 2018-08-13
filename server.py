@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, connect_to_db
+from model import db, User, Allergy, UserAllergy, connect_to_db
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -64,7 +64,7 @@ def register_form():
 	email=request.form.get("email")
 	password=request.form.get("password")
 
-	new_user = fname
+	# new_user = fname
 
 	new_user = User(fname=fname, lname=lname, email=email, password=password)
 
@@ -72,27 +72,16 @@ def register_form():
 	# # 	flash("User already exists in our database!")
 	# # 	return ?
 
-	# db.session.add(new_user)
-	# db.session.commit()
+	db.session.add(new_user)
+	db.session.commit()
 	# flash(f"User {fname} {lname} added to database.")
 	# return redirect(f"/users/{new_user.user_id}")
 
 
+	session["new_user_id"] = new_user.user_id
+
 	flash(f"User added to database.")
-	return redirect("/")
-
-
-	#redirect to login
-	#else: add user to database
-	#redirect to homepage
-	
-
-	# return render_template("allergies.html") add allergies option as OPTION to user
-	#eg in homepage
-
-# make a form for allergies -next route
-
-
+	return redirect("/allergy")
 
 @app.route("/allergy")
 def show_allergy_form():
@@ -100,16 +89,41 @@ def show_allergy_form():
 
 	return render_template("allergies.html")
 
+
+
 @app.route("/allergy", methods=["POST"])
 def handle_allergy_form():
 	"""Handle user's allergies."""
 
-	# return render_template("users_allergies.html")
-	pass
+######################### MORE ELEGANT??
+	allergens = []
 
+	gluten = request.form.get("allergen1")
+	allergens.append(gluten)
 
+	wheat = request.form.get("allergen2")
+	allergens.append(wheat)
 
+	tree_nut = request.form.get("allergen3")
+	allergens.append(tree_nut)
 
+	shellfish = request.form.get("allergen4")
+	allergens.append(shellfish)
+
+	soy = request.form.get("allergen5")
+	allergens.append(soy)
+
+	user_id = session["new_user_id"]
+
+	if gluten in allergens:
+		allergy_id = 1
+		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+		db.session.add(new_users_allergy)
+
+	db.session.commit()
+
+	return render_template("users_allergies.html", allergens=allergens)
+	# make the user page more personal
 
 
 @app.route("/login")
@@ -162,7 +176,17 @@ def login_form():
 	#if yes: homepage 1st option
 	#if no: homepage 2nd option
 
+@app.route("/options-calories")
+def user_options():
+	"""Show users options"""
 
+	return render_template("options_calories.html")
+
+@app.route("/options-calories", methods=["POST"])
+def user_calories():
+	"""Get the calories."""
+
+	calories = request.form.get("calories")
 
 
 
@@ -272,7 +296,5 @@ if __name__ == "__main__":
 	app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 	DebugToolbarExtension(app)
 	connect_to_db(app)
-
+    # db.create_all()
 	app.run(host='0.0.0.0', port=5000)
-
-
