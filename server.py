@@ -57,22 +57,21 @@ def register():
 @app.route("/register", methods=["POST"])
 def register_form():
 	"""Register user if not in the database"""
-	#need to be continued and user should be added to the database
 
 	fname=request.form.get("fname")
 	lname=request.form.get("lname")
 	email=request.form.get("email")
 	password=request.form.get("password")
 
-	# new_user = fname
-
 	new_user = User(fname=fname, lname=lname, email=email, password=password)
+	user = User.query.filter_by(fname=fname, lname=lname, email=email, password=password).first()
 
-	# # if new_user:
-	# # 	flash("User already exists in our database!")
-	# # 	return ?
+	if new_user.email == user.email:
+		flash("User already exists in our database!")
+		return redirect("/")
+	else:
+		db.session.add(new_user)
 
-	db.session.add(new_user)
 	db.session.commit()
 	# flash(f"User {fname} {lname} added to database.")
 	# return redirect(f"/users/{new_user.user_id}")
@@ -112,26 +111,27 @@ def handle_allergy_form():
 
 	soy = request.form.get("allergen5")
 	allergens.append(soy)
+	print(gluten, wheat)
 
 	user_id = session["new_user_id"]
 
-	if gluten in allergens:
+	if gluten:
 		allergy_id = 1
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
-	elif wheat in allergens:
+	if wheat:
 		allergy_id = 2
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
-	elif tree_nut in allergens:
+	if tree_nut:
 		allergy_id = 3
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
-	elif shellfish in allergens:
+	if shellfish:
 		allergy_id = 4
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
-	elif soy in allergens:
+	if soy:
 		allergy_id = 5
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
