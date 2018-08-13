@@ -95,7 +95,7 @@ def show_allergy_form():
 def handle_allergy_form():
 	"""Handle user's allergies."""
 
-######################### MORE ELEGANT??
+######################### maybe MORE ELEGANT??
 	allergens = []
 
 	gluten = request.form.get("allergen1")
@@ -117,6 +117,22 @@ def handle_allergy_form():
 
 	if gluten in allergens:
 		allergy_id = 1
+		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+		db.session.add(new_users_allergy)
+	elif wheat in allergens:
+		allergy_id = 2
+		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+		db.session.add(new_users_allergy)
+	elif tree_nut in allergens:
+		allergy_id = 3
+		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+		db.session.add(new_users_allergy)
+	elif shellfish in allergens:
+		allergy_id = 4
+		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+		db.session.add(new_users_allergy)
+	elif soy in allergens:
+		allergy_id = 5
 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
 		db.session.add(new_users_allergy)
 
@@ -152,9 +168,6 @@ def login_form():
 	session["user_id"] = user.user_id
 	flash("User logged in!")
 	return redirect("/")
-
-
-
 
 
 	# if new_user:
