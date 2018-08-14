@@ -1,23 +1,9 @@
-<h2>If you want to take control about the macros please ...blablabla</h2>
-<h5>(It has to sum up to 100%)</h5>
+{% extends 'base.html' %}
 
-<!-- just a number - grams -->
+{% block title %}Homepage{% endblock %}
 
-<h4>Carbohydrates:</h4>
-<form>
-  <input type="radio" name="carbs" value="75"> 75 <br>
-  <input type="radio" name="carbs" value="60"> 60 <br>
-  <input type="radio" name="carbs" value="50"> 50
-</form>
+{% block content %}
 
-
-
-
-
-
-
-
-<h2>Any other preferences?</h2>
 <form action="/options" method="POST">
 	<br>
 	Do you like your meal to be...
@@ -36,3 +22,7 @@
 	<br>
 	<input type="submit" value="Submit">
 </form>
+
+
+
+{% endblock %}

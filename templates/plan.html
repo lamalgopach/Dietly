@@ -16,16 +16,41 @@
 		<input type="number" name="calories" min=1400 max=4000 required><br><br>
 
 		<h5>How many percent of this would you like to spend on carbohydrates?</h5>
-		<input type="number" name="carbs" min=0 max=100 required><br><br>
+		<input id="carbs" type="number" name="carbs" min=0 max=100 required><br><br>
 
 		<h5>What about fat?</h5>
-		<input type="number" name="fat" min=0 max=100 required><br><br>
+		<input id="fat" type="number" name="fat" min=0 max=100 required><br><br>
 		
-		<h5>And proteins?</h5>
-		<input type="number" name="protein" min=0 max=100 required><br><br>
+		<h5>And protein?</h5>
+		<input id="protein" type="number" name="protein" min=0 max=100 required><br><br>
 		
 		<input type="submit" value="Submit">
 	</form>
+
+	<script type="text/javascript">
+		
+		let carbs = document.querySelector("input#carbs");
+		let fat = document.querySelector(input("#fat"));
+
+		let fatMax = fat.getAttribute('max');
+
+
+		function newFatMax(carbs){
+
+			fatMax = 100 - 50
+		}
+
+		// $.('#carbs').on('change', newFatMax);
+
+		// let myBtn = document.querySelector('#special-btn');
+
+		carbs.addEventListener('change', newFatMax);
+
+// $("input#carbs").val()
+
+
+
+	</script>>
 
 
 {% endblock %}	

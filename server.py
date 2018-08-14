@@ -175,9 +175,6 @@ def login_form():
 	return redirect("/")
 
 
-
-
-
 @app.route("/plan")
 def user_options():
 	"""Show users options"""
@@ -203,7 +200,74 @@ def user_preferences():
 
 
 
-	#add pref to the db
+##############################OPTIONS - TO DDOOOO
+
+
+@app.route("/options")
+def show_options_form():
+	"""Redirect from preferences form. Display checkbox with diet options."""
+
+	return render_template("options_diet.html")
+
+
+@app.route("/options", methods=["POST"])
+def handle_options_form():
+	"""Handle user's diet options."""
+	pass
+
+
+
+
+	# alcohol_free = request.form.get("Alcohol-Free")
+	# balanced = request.form.get("Balanced")
+	# high_protein = request.form.get("High-Protein")
+	# low_carb = request.form.get("Low-Carb")	
+	# low_fat = request.form.get("Low-Fat")
+
+
+	# peanut_free = request.form.get("Peanut-Free")
+	# low_fat = request.form.get("Sugar-Conscious")
+
+
+
+	# <input type="checkbox", name="option6", value="Peanut-Free"> Peanut-Free? <br>
+	# <input type="checkbox", name="option7", value="Sugar-Conscious"> Sugar-Conscious? <br>
+	# <input type="checkbox", name="option8", value="Tree-Nut-Free"> Tree-Nut-Free? <br>
+	# <input type="checkbox", name="option9", value="Vegan"> Vegan? <br>
+	# <input type="checkbox", name="option10", value="Vegetarian"> Vegetarian? <br>
+
+
+
+
+# 	user_id = session["new_user_id"]
+
+# 	if gluten:
+# 		allergy_id = 1
+# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+# 		db.session.add(new_users_allergy)
+# 	if wheat:
+# 		allergy_id = 2
+# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+# 		db.session.add(new_users_allergy)
+# 	if tree_nut:
+# 		allergy_id = 3
+# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+# 		db.session.add(new_users_allergy)
+# 	if shellfish:
+# 		allergy_id = 4
+# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+# 		db.session.add(new_users_allergy)
+# 	if soy:
+# 		allergy_id = 5
+# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+# 		db.session.add(new_users_allergy)
+
+# 	db.session.commit()
+
+# 	return render_template("users_allergies.html", allergens=allergens)
+# 	# make the user page more personal
+
+
 
 
 
