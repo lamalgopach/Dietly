@@ -1,0 +1,10 @@
+1 : alcohol-free
+2 : balanced
+3 : high-protein
+4 : low-carb
+5 : low-fat
+6 : peanut-free
+7 : sugar-conscious
+8 : tree-nut-free
+9 : vegan
+10 : vegetarian

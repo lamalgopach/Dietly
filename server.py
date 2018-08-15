@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, connect_to_db
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -114,26 +114,11 @@ def handle_allergy_form():
 
 	user_id = session["new_user_id"]
 
-	if gluten:
-		allergy_id = 1
-		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-		db.session.add(new_users_allergy)
-	if wheat:
-		allergy_id = 2
-		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-		db.session.add(new_users_allergy)
-	if tree_nut:
-		allergy_id = 3
-		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-		db.session.add(new_users_allergy)
-	if shellfish:
-		allergy_id = 4
-		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-		db.session.add(new_users_allergy)
-	if soy:
-		allergy_id = 5
-		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-		db.session.add(new_users_allergy)
+	for i, allergen in enumerate(allergens):
+  		if allergen:
+  			allergy_id = i + 1
+  			user_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
+  			db.session.add(user_allergy)
 
 	db.session.commit()
 
@@ -169,8 +154,6 @@ def login_form():
 	return redirect("/")
 
 	# return redirect(f"/users/{new_user.user_id}")
-
-
 	flash(f"User succesfully logged in.")
 	return redirect("/")
 
@@ -205,7 +188,7 @@ def user_preferences():
 
 @app.route("/options")
 def show_options_form():
-	"""Redirect from preferences form. Display checkbox with diet options."""
+	"""Redirect from the preferences form. Display checkbox with diet options."""
 
 	return render_template("options_diet.html")
 
@@ -213,93 +196,50 @@ def show_options_form():
 @app.route("/options", methods=["POST"])
 def handle_options_form():
 	"""Handle user's diet options."""
-	pass
+	
+	diet_options = []
 
+	alcohol_free = request.form.get("option1")
+	diet_options.append(alcohol_free)
 
+	balanced = request.form.get("option2")
+	diet_options.append(balanced)
 
+	high_protein = request.form.get("option3")
+	diet_options.append(high_protein)
 
-	# alcohol_free = request.form.get("Alcohol-Free")
-	# balanced = request.form.get("Balanced")
-	# high_protein = request.form.get("High-Protein")
-	# low_carb = request.form.get("Low-Carb")	
-	# low_fat = request.form.get("Low-Fat")
+	low_carb = request.form.get("option4")
+	diet_options.append(low_carb)
 
+	low_fat = request.form.get("option5")
+	diet_options.append(low_fat)
 
-	# peanut_free = request.form.get("Peanut-Free")
-	# low_fat = request.form.get("Sugar-Conscious")
+	peanut_free = request.form.get("option6")
+	diet_options.append(peanut_free)
 
+	sugar_conscious = request.form.get("option7")
+	diet_options.append(sugar_conscious)
 
+	tree_nut_free = request.form.get("option8")
+	diet_options.append(tree_nut_free)
 
-	# <input type="checkbox", name="option6", value="Peanut-Free"> Peanut-Free? <br>
-	# <input type="checkbox", name="option7", value="Sugar-Conscious"> Sugar-Conscious? <br>
-	# <input type="checkbox", name="option8", value="Tree-Nut-Free"> Tree-Nut-Free? <br>
-	# <input type="checkbox", name="option9", value="Vegan"> Vegan? <br>
-	# <input type="checkbox", name="option10", value="Vegetarian"> Vegetarian? <br>
+	vegan = request.form.get("option9")
+	diet_options.append(vegan)
 
+	vegetarian = request.form.get("option10")
+	diet_options.append(vegetarian)
 
+	user_id = session["new_user_id"]
 
+	for i, diet_option in enumerate(diet_options):
+		if diet_option:
+			diet_id = i + 1
+			user_diet = UserDiet(user_id=user_id, diet_id=diet_id)
+			db.session.add(user_diet)
 
-# 	user_id = session["new_user_id"]
+	db.session.commit()
 
-# 	if gluten:
-# 		allergy_id = 1
-# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-# 		db.session.add(new_users_allergy)
-# 	if wheat:
-# 		allergy_id = 2
-# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-# 		db.session.add(new_users_allergy)
-# 	if tree_nut:
-# 		allergy_id = 3
-# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-# 		db.session.add(new_users_allergy)
-# 	if shellfish:
-# 		allergy_id = 4
-# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-# 		db.session.add(new_users_allergy)
-# 	if soy:
-# 		allergy_id = 5
-# 		new_users_allergy = UserAllergy(user_id=user_id, allergy_id=allergy_id)
-# 		db.session.add(new_users_allergy)
-
-# 	db.session.commit()
-
-# 	return render_template("users_allergies.html", allergens=allergens)
-# 	# make the user page more personal
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+	return render_template("homepage.html")
 
 @app.route("/logout")
 def logout():

@@ -4,7 +4,7 @@ import json
 import requests
 import os
 
-from model import Allergy, connect_to_db, db
+from model import Allergy, Diet, connect_to_db, db
 from server import app
 
 
@@ -259,10 +259,10 @@ EDAMAM_URL = "https://api.edamam.com/search"
 # set_of_recipes = get_recipe_attributes('dinner')
 # print_recipe_to_textfile(set_of_recipes)
 
-def load_allergens(user_filename):
-    """Load allergens from allergy into database."""
+def load_allergens(allergy_filename):
+    """Load allergens from allergies.txt into database."""
 
-    for i, row in enumerate(open(user_filename)):
+    for i, row in enumerate(open(allergy_filename)):
         row = row.rstrip()
         allergy_id, allergy_name = row.split(":")
 
@@ -273,11 +273,27 @@ def load_allergens(user_filename):
 
     db.session.commit()
 
+def load_diets(diet_filename):
+    """Load diets from diets.txt into database."""
+
+    for i, row in enumerate(open(diet_filename)):
+        row = row.rstrip()
+        diet_id, diet_name = row.split(":")
+
+        diet = Diet(diet_id=diet_id,
+                    diet_name=diet_name)
+
+        db.session.add(diet)
+
+    db.session.commit()
+
 
 if __name__ == "__main__":
     connect_to_db(app)
     db.create_all()
 
-    user_filename = "seed_data/allergens.txt"
-
-    load_allergens(user_filename)
+    allergy_filename = "seed_data/allergens.txt"
+    diet_filename = "seed_data/diets.txt"
+    
+    load_allergens(allergy_filename)
+    load_diets(diet_filename)

@@ -130,61 +130,61 @@ class Allergy(db.Model):
 class UserAllergy(db.Model):
     """Middle table. List of user's allergies"""
 
-    __tablename__ = "users_and_allergies"
+    __tablename__ = "users_allergies"
 
     user_allergy_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
     allergy_id = db.Column(db.Integer, db.ForeignKey('allergies.allergy_id'))
    
-    user = db.relationship("User", backref=db.backref("users_and_allergies", order_by=user_allergy_id))
-    allergy = db.relationship("Allergy", backref=db.backref("users_and_allergies", order_by=user_allergy_id))
+    user = db.relationship("User", backref=db.backref("users_allergies", order_by=user_allergy_id))
+    allergy = db.relationship("Allergy", backref=db.backref("users_allergies", order_by=user_allergy_id))
 
     def __repr__(self):
         return f"""<ID={self.user_allergy_id}>"""
 
 #9 middle #3
-class Label(db.Model):
-    """List of diet and health labels."""
+class Diet(db.Model):
+    """List of diet and health diets."""
 
-    __tablename__ = "labels"
+    __tablename__ = "diets"
 
-    label_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    label_name = db.Column(db.String, nullable=False)
+    diet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    diet_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f"""<Label ID={self.label_id}>"""    
+        return f"""<Diet ID={self.diet_id}>"""    
 
 #10 middle #4
-class UserLabel(db.Model):
-    """Middle table with users and labels."""
+class UserDiet(db.Model):
+    """Middle table with users and diets."""
 
-    __tablename__ = "users_labels"
+    __tablename__ = "users_diets"
 
-    user_label_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    user_diet_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.user_id'))
-    label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
+    diet_id = db.Column(db.Integer, db.ForeignKey('diets.diet_id'))
    
-    user = db.relationship("User", backref=db.backref("users_labels", order_by=user_label_id))
-    label = db.relationship("Label", backref=db.backref("users_labels", order_by=user_label_id))
+    user = db.relationship("User", backref=db.backref("users_diets", order_by=user_diet_id))
+    diet = db.relationship("Diet", backref=db.backref("users_diets", order_by=user_diet_id))
 
     def __repr__(self):
-        return f"""<ID={self.user_label_id}>"""
+        return f"""<ID={self.user_diet_id}>"""
 
 #11 middle #5
-class RecipeLabel(db.Model):
-    """Middle table. List of labels in recipes."""
+class RecipeDiet(db.Model):
+    """Middle table. List of diets in recipes."""
 
-    __tablename__ = "labels_recipes"
+    __tablename__ = "diets_recipes"
 
-    label_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    diet_recipe_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
-    label_id = db.Column(db.Integer, db.ForeignKey('labels.label_id'))
+    diet_id = db.Column(db.Integer, db.ForeignKey('diets.diet_id'))
    
-    recipe = db.relationship("Recipe", backref=db.backref("labels_recipes", order_by=label_recipe_id))
-    label = db.relationship("Label", backref=db.backref("labels_recipes", order_by=label_recipe_id))
+    recipe = db.relationship("Recipe", backref=db.backref("diets_recipes", order_by=diet_recipe_id))
+    diet = db.relationship("Diet", backref=db.backref("diets_recipes", order_by=diet_recipe_id))
 
     def __repr__(self):
-        return f"""<ID={self.label_recipe_id}>"""
+        return f"""<ID={self.diet_recipe_id}>"""
 
 #12 middle #6
 
