@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Homepage{% endblock %}
+
+{% block content %}
+
+<form action="/make-a-meal-from-fridge" method="POST">
+	<br>
+	Tell me what is in your fridge
+	<br>
+	<br>
+	<input type="checkbox", name="option1", value="chicken"> Chicken <br>
+	<input type="checkbox", name="option2", value="tomato"> Tomato <br>
+	<input type="checkbox", name="option3", value="avocado"> Avocado <br>
+	<input type="checkbox", name="option4", value="onion"> Onion <br>
+	<input type="checkbox", name="option5", value="milk"> Milk <br>
+	<input type="checkbox", name="option6", value="ginger"> Ginger <br>
+	<input type="checkbox", name="option7", value="oregano"> Oregano <br>
+	<input type="checkbox", name="option8", value="pepper"> Pepper <br>
+	<input type="checkbox", name="option9", value="parsley"> Parsley <br>
+	<input type="checkbox", name="option10", value="potato"> Potato <br>
+	<br>
+	<input type="submit" value="Submit">
+</form>
+
+
+
+{% endblock %}

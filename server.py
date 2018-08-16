@@ -241,6 +241,72 @@ def handle_options_form():
 
 	return render_template("homepage.html")
 
+@app.route("/make-a-meal-from-fridge")
+def show_ing_form():
+	"""Display checkbox with ingredients options."""
+
+	return render_template("make_a_meal.html")
+
+@app.route("/make-a-meal-from-fridge", methods = ["POST"])
+def make_a_meal_from_fridge():
+	"""Get user ingredients and query to API for available recipes."""
+
+	chicken = request.form.get("option1")
+	tomato = request.form.get("option2")
+	avocado = request.form.get("option3")
+	onion = request.form.get("option4")
+	milk = request.form.get("option5")
+	ginger = request.form.get("option6")
+	oregano = request.form.get("option7")
+	pepper = request.form.get("option8")
+	parsley = request.form.get("option9")
+	potato = request.form.get("option10")
+
+	ingredients = []
+	ingredients.append(chicken)
+	ingredients.append(tomato)
+	ingredients.append(avocado)
+	ingredients.append(milk)
+	ingredients.append(ginger)
+	ingredients.append(oregano)
+	ingredients.append(pepper)
+	ingredients.append(parsley)
+	ingredients.append(potato)
+	# can I do this more elegant?
+
+	results = []
+
+	# for ing in ingredients:
+	# 	if ing != None:
+	# 		payload = { 'q': ing,
+	# 					'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
+	# 					'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
+	
+	# 		response = requests.get(EDAMAM_URL, params=payload)
+	# 		data = response.json()
+			
+	# 		if response.ok:
+	# 			result = data["hits"][1]["recipe"]["url"]
+	# 			results.append(result)
+
+	#how can I add multiple queries?
+
+	payload = { 'q': ingredients,
+				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
+				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
+	
+	response = requests.get(EDAMAM_URL, params=payload)
+	data = response.json()
+			
+	if response.ok:
+		result = data["hits"][1]["recipe"]["url"]
+		results.append(result)
+
+
+
+	return render_template("examples_of_recipes.html", results=results)
+
+
 @app.route("/logout")
 def logout():
     """Log out user."""

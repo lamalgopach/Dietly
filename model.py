@@ -18,10 +18,10 @@ class Recipe(db.Model):
     recipe_image = db.Column(db.String)
     directions = db.Column(db.Text, nullable=False)#here will probably goes the url so text/string??? 
     servings = db.Column(db.Float, nullable=False) #default=2
-    calories = db.Column(db.Integer, nullable=False, default=0) #not sure about if nullable
-    carbohydrates = db.Column(db.Integer, nullable=False) #not sure if nullable
-    fat = db.Column(db.Integer, nullable=False) #not sure if nullable
-    protein = db.Column(db.Integer, nullable=False) #not sure if nullable 
+    calories = db.Column(db.Float, nullable=False, default=0) #not sure about if nullable
+    carbohydrates = db.Column(db.Float, nullable=False) #not sure if nullable
+    fat = db.Column(db.Float, nullable=False) #not sure if nullable
+    protein = db.Column(db.Float, nullable=False) #not sure if nullable 
 
 
     def __repr__(self):
@@ -50,7 +50,7 @@ class RecipeIngredient(db.Model):
     recipe_ingredient_id = db.Column(db.Integer, autoincrement=True, primary_key=True) 
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id')) #why string?
     ingredient_id = db.Column(db.Integer, db.ForeignKey('ingredients.ingredient_id'))
-    amount = db.Column(db.Integer, nullable=False)
+    amount = db.Column(db.Float)
 
     recipe = db.relationship("Recipe", backref=db.backref("recipes_ingredients", order_by=recipe_ingredient_id))
 
