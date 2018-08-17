@@ -43,8 +43,8 @@ def homepage():
 		# go to make a meal from your fridge
 
 	#if NOT logged in - flash message: You are not logged in
-	if "user_id" in session:
-		print(session)
+	# if "user_id" in session:
+	# 	print(session)
 		# show logout button
 
 
@@ -85,7 +85,7 @@ def register_form():
 
 @app.route("/allergy")
 def show_allergy_form():
-	"""Redirect from homepage/registration form. Display checkbox with set of allergies."""
+	"""Redirect from homepage form. Display checkbox with set of allergies."""
 
 	return render_template("allergies.html")
 
@@ -122,76 +122,15 @@ def handle_allergy_form():
 
 	db.session.commit()
 
-	return render_template("users_allergies.html", allergens=allergens)
+	# return render_template("users_allergies.html", allergens=allergens)
+	return redirect("/options")
 	# make the user page more personal
-
-
-@app.route("/login")
-def login():
-	"""Show login form."""
-
-	return render_template("login_page.html")
-
-@app.route("/login", methods=["POST"])
-def login_form():
-	"""Login user."""
-
-	email=request.form["email"]
-	password=request.form["password"]
-
-	user = User.query.filter_by(email=email).first()
-
-	if not email:
-		flash("Not such user.")
-		return redirect("/login")
-
-	elif user.password != password:
-		flash("Incorrect password!")
-		return redirect("/login")
-
-	session["user_id"] = user.user_id
-	flash("User logged in!")
-	return redirect("/")
-
-	# return redirect(f"/users/{new_user.user_id}")
-	flash(f"User succesfully logged in.")
-	return redirect("/")
-
-
-@app.route("/plan")
-def user_options():
-	"""Show users options"""
-
-	return render_template("plan.html")
-
-@app.route("/plan", methods=["POST"])
-def user_preferences():
-	"""Get the preferences."""
-
-	plan_name = request.form.get("plan_name")
-	user_id = session["user_id"]
-	calories = request.form.get("calories")
-	carbohydrates = request.form.get("carbs")
-	fat = request.form.get("fat")
-	protein = request.form.get("protein")
-
-	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	db.session.add(new_plan)
-	db.session.commit()
-
-	return render_template("homepage.html")
-
-
-
-##############################OPTIONS - TO DDOOOO
-
 
 @app.route("/options")
 def show_options_form():
 	"""Redirect from the preferences form. Display checkbox with diet options."""
 
 	return render_template("options_diet.html")
-
 
 @app.route("/options", methods=["POST"])
 def handle_options_form():
@@ -239,7 +178,205 @@ def handle_options_form():
 
 	db.session.commit()
 
-	return render_template("homepage.html")
+	return redirect("/login")
+
+
+@app.route("/login")
+def login():
+	"""Show login form."""
+
+	return render_template("login_page.html")
+
+@app.route("/login", methods=["POST"])
+def login_form():
+	"""Login user."""
+
+	email=request.form["email"]
+	password=request.form["password"]
+
+	user = User.query.filter_by(email=email).first()
+
+	if not user:
+		flash("Not such user.")
+		return redirect("/login")
+
+	elif user.password != password:
+		flash("Incorrect password!")
+		return redirect("/login")
+
+	# elif "user_id" in session:
+	# 	flash("Other user already logged in!")
+	# 	return redirect("/")
+
+	session["user_id"] = user.user_id
+	# flash("User logged in!")
+	# return redirect("/")
+
+	# return redirect(f"/users/{new_user.user_id}")
+	flash(f"User succesfully logged in.")
+	return redirect("/plan")
+
+
+
+
+@app.route("/plan")
+def user_options():
+	"""Show users options"""
+
+	return render_template("plan.html")
+
+@app.route("/plan", methods=["POST"])
+def user_preferences():
+	"""Get the preferences."""
+
+	plan_name = request.form.get("plan_name")
+	user_id = session["user_id"]
+	calories = request.form.get("calories")
+	carbohydrates = request.form.get("carbs")
+	fat = request.form.get("fat")
+	protein = request.form.get("protein")
+
+	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	db.session.add(new_plan)
+	db.session.commit()
+
+	#make a helper function
+
+	#why calories is str??
+	# calories = float(calories)
+	# carbohydrates = float(carbohydrates)
+	# fat = float(fat)
+	# protein = float(protein)
+
+	# # for i in range(4):
+	# # 	?
+
+	# br_cal = calories * 0.35
+	# br_carbs = carbohydrates * 0.35
+	# br_fat = fat * 0.35
+	# br_protein = protein * 0.35
+
+
+	# l_cal = calories * 0.2
+	# l_carbs = carbohydrates * 0.2
+	# l_fat = fat * 0.2
+	# l_protein = protein * 0.2
+
+
+	# dn_cal = calories * 0.45
+	# dn_carbs = carbohydrates * 0.45
+	# dn_fat = fat * 0.45
+	# dn_protein = protein * 0.45
+
+	return render_template("user_plan.html", calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	# render to some recipes
+
+@app.route("/breakfast")
+def search_breakfast():
+	"""Search breakfast which calories are 35% of user's daily preference."""
+
+	# calories = request.form.get("calories")
+	# carbohydrates = request.form.get("carbohydrates")
+	# fat = request.form.get("fat")
+	# protein = request.form.get("protein")
+
+	br_cal = 800
+
+
+	# br_cal = calories * 0.35
+	# br_carbs = carbohydrates * 0.35
+	# br_fat = fat * 0.35
+	# br_protein = protein * 0.35
+
+	breakfast = "breakfast"
+
+	payload = { 'q': breakfast,
+				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
+				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
+
+	response = requests.get(EDAMAM_URL, params=payload)
+	data = response.json()
+
+	results = []
+
+	if response.ok:
+		for n in range(5):
+			recipe = {}
+			rec_cal = data["hits"][n]["recipe"]["calories"]
+			rec_serv = data["hits"][n]["recipe"]["yield"]
+
+			limit_cal = rec_cal/rec_serv
+			
+			if limit_cal > br_cal:
+				continue
+
+			recipe_name = data["hits"][n]["recipe"]["label"]
+			recipe["recipe_name"] = recipe_name
+
+			recipe_url = data["hits"][n]["recipe"]["uri"]
+			recipe["recipe_url"] = recipe_url
+			
+			recipe_image = data["hits"][n]["recipe"]["image"]
+			recipe["recipe_image"] = recipe_image
+
+			directions = data["hits"][n]["recipe"]["url"]
+			recipe["directions"] = directions
+
+			servings = data["hits"][n]["recipe"]["yield"]
+			recipe["servings"] = servings
+
+			calories = data["hits"][n]["recipe"]["calories"]
+			recipe["calories"] = calories
+
+			carbohydrates = data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"]
+			recipe["carbohydrates"] = carbohydrates
+
+			fat = data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"]
+			recipe["fat"] = fat
+
+			protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
+			recipe["protein"] = protein
+
+			results.append(recipe)
+
+	return render_template("breakfast.html", results=results)
+
+
+@app.route("/add-breakfast")
+def add_breakfast_to_db():
+	# make a form which display preferable breakfasts
+	# get favorite breakfasts
+
+# #########think about the plan obj
+
+	# for n in range(5):
+	# 	recipe_obj = Recipe(recipe_name=data["hits"][n]["recipe"]["label"],
+	# 						recipe_url=data["hits"][n]["recipe"]["uri"],
+	# 						recipe_image=data["hits"][n]["recipe"]["image"],
+	# 						directions=data["hits"][n]["recipe"]["url"],
+	# 						servings=data["hits"][n]["recipe"]["yield"],
+	# 						calories=data["hits"][1]["recipe"]["calories"],
+	# 						carbohydrates=data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"],
+	# 						fat=data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"],
+	# 						protein=data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"])
+	# 	db.session.add(recipe_obj)
+	# db.session.commit()
+
+	pass
+
+
+
+
+	# pass
+	# #how can I query my API based on the calories?
+	# #calories are per whole recipe
+
+	#look for the recipes with this amount of calories
+
+
+
+
+#########query just 1 thing - how can I query multiple? FUNCTION MAKE A MEAL FROM YOUR FRIDGE################
 
 @app.route("/make-a-meal-from-fridge")
 def show_ing_form():
@@ -276,33 +413,25 @@ def make_a_meal_from_fridge():
 
 	results = []
 
-	# for ing in ingredients:
-	# 	if ing != None:
-	# 		payload = { 'q': ing,
-	# 					'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
-	# 					'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
-	
-	# 		response = requests.get(EDAMAM_URL, params=payload)
-	# 		data = response.json()
-			
-	# 		if response.ok:
-	# 			result = data["hits"][1]["recipe"]["url"]
-	# 			results.append(result)
+	meal = ""
+	for ing in ingredients:
+		if ing != None:
+			meal += ing + ","
 
-	#how can I add multiple queries?
-
-	payload = { 'q': ingredients,
+	payload = { 'q': meal,
 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
-	
+
 	response = requests.get(EDAMAM_URL, params=payload)
 	data = response.json()
-			
+	
 	if response.ok:
-		result = data["hits"][1]["recipe"]["url"]
-		results.append(result)
+		for n in range(5):
+			result = data["hits"][n]["recipe"]["url"]
+			results.append(result)
 
-
+#later: add photo to the recipe
+#later: do the interactive link
 
 	return render_template("examples_of_recipes.html", results=results)
 
@@ -318,48 +447,7 @@ def logout():
 	# add a button Log Out
 	# jquery
 
-@app.route("/design-your-meal-plan")
-def design_meal_plan():
 
-	# make a form: calories - text
-	# macros - numbers
-	# type of diet
-	#in this function calculate sum
-	#ask how you can sum up to 100
-	#JS?????????
-	#so basically check if macros are sum up to 100
-
-	pass
-@app.route("/get-users-preferences")
-def get_users_preferences():
-	"""Get users preferences. Store in database."""
-	#update model.py
-	#get the preferences: calories
-	#add to the database
-	#redirect to next route
-
-	pass
-
-
- ##################converting macros##########
-@app.route("/convert-fat")
-def convert_fat():
-	"""Convert weight of fat to get the percentage of energy"""
-	# write a test first
-	# revise the code below
-	# get a value of fat from the form user`s preferences
-	# calculate accurate value of fat
-	# return accurate value of fat
-	# if the function is ok repeat the same for carbs and protein in separate funtions
-
-	pass
-
-@app.route("/display-breakfast-preferences")
-def display_breakfast_preferences():
-	# make a form which display preferable breakfasts
-	# get favorite breakfasts
-
-	pass
 
 
 @app.route("/")

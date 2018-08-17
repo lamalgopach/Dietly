@@ -31,7 +31,7 @@ def get_recipe_attributes_db(name):
 	if response.ok:
 		for n in range(5):
 			recipe_obj = Recipe(recipe_name=data["hits"][n]["recipe"]["label"],
-								recipe_url=data["hits"][n]["recipe"]["url"],
+								recipe_url=data["hits"][n]["recipe"]["uri"],
 								recipe_image=data["hits"][n]["recipe"]["image"],
 								directions=data["hits"][n]["recipe"]["url"],
 								servings=data["hits"][n]["recipe"]["yield"],
@@ -93,12 +93,12 @@ if __name__ == "__main__":
     name = "breakfast"
     # name = "lunch"
     # name = "dinner"
-    # allergy_filename = "seed_data/allergens.txt"
-    # diet_filename = "seed_data/diets.txt"
+    allergy_filename = "seed_data/allergens.txt"
+    diet_filename = "seed_data/diets.txt"
     
     get_recipe_attributes_db(name)
-    # load_allergens(allergy_filename)
-    # load_diets(diet_filename)
+    load_allergens(allergy_filename)
+    load_diets(diet_filename)
 
 
 

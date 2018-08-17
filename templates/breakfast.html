@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Your recipes{% endblock %}
+
+{% block content %}
+
+<h1> Your recipes: </h1>
+
+{% for result in results %}
+<br>
+	<h1>{{ result["recipe_name"] }}</h1> 
+	<img src="{{ result['recipe_image'] }}">
+
+	<form action="/add-breakfast" method="POST">
+	<input type="hidden" value="{{ result['recipe_name'] }}">
+	<input type="hidden" value="{{ result['recipe_url'] }}">
+	<input type="hidden" value="{{ result['recipe_image'] }}">
+	<input type="hidden" value="{{ result['directions'] }}">
+	<input type="hidden" value="{{ result['servings'] }}">
+	<input type="hidden" value="{{ result['calories'] }}">
+	<input type="hidden" value="{{ result['carbohydrates'] }}">
+	<input type="hidden" value="{{ result['fat'] }}">
+	<input type="hidden" value="{{ result['protein'] }}">
+
+	<input type="submit" value="Add">
+
+	</form>
+
+<br>
+{% endfor %}
+
+
+{% endblock %}	
