@@ -7,9 +7,12 @@
 <h1> Your recipes: </h1>
 
 {% for result in results %}
-<li>
-	{{ result }}
-</li>
+	<li>
+	<a href="{{ result['recipe_url'] }}">{{result['recipe_name']}}</a><br><br>
+	</li>
+
+	<img src="{{ result['recipe_image'] }}">
+
 {% endfor %}
 
 

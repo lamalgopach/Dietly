@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, UserDiet, RecipePlan, Recipe, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, RecipePlan, Recipe, connect_to_db
 
 import random
 
@@ -124,7 +124,6 @@ def handle_allergy_form():
 
 	db.session.commit()
 
-	# return render_template("users_allergies.html", allergens=allergens)
 	return redirect("/options")
 	# make the user page more personal
 
@@ -220,8 +219,6 @@ def login_form():
 	#in version 2.0 add option to go whenever
 
 
-
-
 @app.route("/plan")
 def user_options():
 	"""Show users options"""
@@ -232,10 +229,11 @@ def user_options():
 def user_preferences():
 	"""Get the preferences."""
 
-	plan_name = request.form.get("plan_name")
 	user_id = session["user_id"]
+
+	plan_name = request.form.get("plan_name")
 	calories = request.form.get("calories")
-	carbohydrates = request.form.get("carbs")
+	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
 
@@ -247,53 +245,35 @@ def user_preferences():
 
 	#why calories is str??
 	# calories = float(calories)
-	# carbohydrates = float(carbohydrates)
-	# fat = float(fat)
-	# protein = float(protein)
 
-	# # for i in range(4):
-	# # 	?
+# 	return render_template("user_plan.html", calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+# 	# render to some recipes
 
-	# br_cal = calories * 0.35
-	# br_carbs = carbohydrates * 0.35
-	# br_fat = fat * 0.35
-	# br_protein = protein * 0.35
+# @app.route("/breakfast")
+# def search_breakfast():
+# 	"""Search breakfast which calories are 35% of user's daily preference."""
 
+# 	# calories = request.form.get("calories")
+# 	# carbohydrates = request.form.get("carbohydrates")
+# 	# fat = request.form.get("fat")
+# 	# protein = request.form.get("protein")
 
-	# l_cal = calories * 0.2
-	# l_carbs = carbohydrates * 0.2
-	# l_fat = fat * 0.2
-	# l_protein = protein * 0.2
+# 	user_id = session["user_id"]
 
-
-	# dn_cal = calories * 0.45
-	# dn_carbs = carbohydrates * 0.45
-	# dn_fat = fat * 0.45
-	# dn_protein = protein * 0.45
-
-	return render_template("user_plan.html", calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	# render to some recipes
-
-@app.route("/breakfast")
-def search_breakfast():
-	"""Search breakfast which calories are 35% of user's daily preference."""
-
-	# calories = request.form.get("calories")
-	# carbohydrates = request.form.get("carbohydrates")
-	# fat = request.form.get("fat")
-	# protein = request.form.get("protein")
-
-	user_id = session["user_id"]
-
+	#change the allergy as the diet or change your mind :)
 	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
-	print(type(user_allergies))
-	#list of allergies
-
 	allergies = []
 	for user_allergy in user_allergies:
 		allergy_name = Allergy.query.filter_by(allergy_id=user_allergy.allergy_id).first()
 		allergies.append(allergy_name.allergy_name)
-	print(allergies)
+
+
+	diets = UserDiet.query.filter_by(user_id=user_id).all()
+	user_diets = []
+	for diet in diets:
+		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
+		user_diets.append(diet_name.diet_name)
+		#diet_name is an object and diet name is an attribute
 
 
 	plan = Plan.query.filter_by(user_id=user_id).first()
@@ -323,7 +303,6 @@ def search_breakfast():
 
 	results = []
 
-	# num = random.randint(0,10)
 	if response.ok:
 		for n in range(5):
 			recipe = {}
@@ -336,6 +315,11 @@ def search_breakfast():
 			recipe_protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]	
 
 			recipe_cautions = data["hits"][n]["recipe"]["cautions"]
+			recipe_labels_1 = data["hits"][n]["recipe"]["dietLabels"]
+			recipe_labels = data["hits"][n]["recipe"]["healthLabels"]
+
+			for rec_lab_1 in recipe_labels_1:
+				recipe_labels.append(rec_lab_1)
 
 			calories_per_yield = recipe_calories/recipe_serving
 			carbohydrates_per_yield = recipe_carbohydrates/recipe_serving
@@ -343,20 +327,6 @@ def search_breakfast():
 			protein_per_yield = recipe_protein/recipe_serving
 
 			sum_per_yield = calories_per_yield + carbohydrates_per_yield + fat_per_yield + protein_per_yield
-
-			# print(data["hits"][n]["recipe"]["label"])
-			# print(breakfast_limit_calories)
-			# print(calories_per_yield)
-			# print()
-			# print(breakfast_limit_carbohydrates)
-			# print(carbohydrates_per_yield)
-			# print()
-			# print(breakfast_limit_fat)
-			# print(fat_per_yield)
-			# print()
-			# print(breakfast_limit_protein)
-			# print(protein_per_yield)
-			# print()
 
 			# below is ok, dont worry!!!
 			if (calories_per_yield > breakfast_limit_calories) or (carbohydrates_per_yield > breakfast_limit_carbohydrates) or (fat_per_yield > breakfast_limit_fat) or (protein_per_yield > breakfast_limit_protein):
@@ -366,21 +336,18 @@ def search_breakfast():
 			has_allergy = False
 
 			for allergy in allergies:
-				print("USER ALLERGIES")
-				print(allergy)
-				print(type(allergy))
-				# for caution in recipe_cautions:
-				# 	print("RECIPE CAUTIONS")
-				# 	print(caution)
-				# 	print(type(caution))
-				# 	if caution == allergy:
-				# 		print("0caution!!!!!!!!!")
-				# 		continue
 				if allergy in recipe_cautions:
-					print("0caution!!!!!!!!!")
 					has_allergy = True
 
-			if has_allergy == False:
+			has_diet_label = False
+			count = 0
+			for user_diet in user_diets:
+				if user_diet in recipe_labels:
+					count += 1
+			if count == len(user_diets):
+				has_diet_label = True
+
+			if has_allergy == False and has_diet_label == True:
 				recipe_name = data["hits"][n]["recipe"]["label"]
 				recipe["recipe_name"] = recipe_name
 
@@ -410,15 +377,16 @@ def search_breakfast():
 
 				results.append(recipe)
 
-	return render_template("breakfast.html", results=results)
+	return render_template("display_breakfast.html", results=results)
 
 
 @app.route("/add-meal", methods=["POST"])
 def add_meal_to_db():
 	"""Add selected meal to the database."""
 
+	user_id = session["user_id"]
 
-	recipe_name = request.form.get["recipe_name"]
+	recipe_name = request.form.get("recipe_name")
 	recipe_url = request.form.get("recipe_url")
 	recipe_image = request.form.get("recipe_image")
 	directions = request.form.get("directions")
@@ -428,22 +396,49 @@ def add_meal_to_db():
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
 
-	print(protein, fat, calories)
-
 	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	
 	db.session.add(recipe_obj)
 	db.session.commit()
 
 	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
+	plan = Plan.query.filter_by(user_id=user_id).first()
 
-	user_id = session["user_id"]
-	plan_id = Plan.query.filter_by(user_id=user_id).first()
-
-	recipe_plan_obj = RecipePlan(plan_id=plan_id, recipe_id=recipe.recipe_id)
-
+	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
 	db.session.add(recipe_plan_obj)
 	db.session.commit()
+
+	return render_template("homepage.html")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 #########query just 1 thing - how can I query multiple? FUNCTION MAKE A MEAL FROM YOUR FRIDGE################
@@ -494,16 +489,26 @@ def make_a_meal_from_fridge():
 
 	response = requests.get(EDAMAM_URL, params=payload)
 	data = response.json()
-	
+
+
 	if response.ok:
 		for n in range(5):
-			result = data["hits"][n]["recipe"]["url"]
-			results.append(result)
+			recipe = {}
+			recipe_url = data["hits"][n]["recipe"]["url"]
+			recipe["recipe_url"] = recipe_url
+
+			recipe_image = data["hits"][n]["recipe"]["image"]
+			recipe["recipe_image"] = recipe_image
+
+			recipe_name = data["hits"][n]["recipe"]["label"]
+			recipe["recipe_name"] = recipe_name
+
+			results.append(recipe)
 
 #later: add photo to the recipe
 #later: do the interactive link
 
-	return render_template("examples_of_recipes.html", results=results)
+	return render_template("make_a_meal_display_recipes.html", results=results)
 
 
 @app.route("/logout")

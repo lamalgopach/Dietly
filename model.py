@@ -100,6 +100,7 @@ class Plan(db.Model):
 
 #6 middle #2
 class RecipePlan(db.Model):
+    # PlanRecipe
     """Associate table. Recipes and Plan"""
 
     __tablename__ = "recipes_plans"
