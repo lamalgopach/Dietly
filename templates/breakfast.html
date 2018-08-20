@@ -11,7 +11,7 @@
 	<h1>{{ result["recipe_name"] }}</h1> 
 	<img src="{{ result['recipe_image'] }}">
 
-	<form action="/add-breakfast" method="POST">
+	<form action="/add-meal" method="POST">
 	<input type="hidden" value="{{ result['recipe_name'] }}">
 	<input type="hidden" value="{{ result['recipe_url'] }}">
 	<input type="hidden" value="{{ result['recipe_image'] }}">

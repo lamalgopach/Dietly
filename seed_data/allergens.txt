@@ -1,5 +1,5 @@
-1 : gluten
-2 : wheat
-3 : tree-nuts
-4 : shellfish
-5 : soy 
+1 : Gluten
+2 : Wheat
+3 : Tree-Nuts
+4 : Shellfish
+5 : Soy 

@@ -5,7 +5,9 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, UserDiet, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, RecipePlan, Recipe, connect_to_db
+
+import random
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -15,23 +17,23 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPL
 
 EDAMAM_URL = "https://api.edamam.com/search"
 
-@app.route("/show-recipe")
-def show_recipe():
-	"""Show the recipe"""
+# @app.route("/show-recipe")
+# def show_recipe():
+# 	"""Show the recipe"""
 
-	recipe_name = 'chicken' 
+# 	recipe_name = 'chicken' 
 
-	payload = { 'q': recipe_name,
-				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
-				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
+# 	payload = { 'q': recipe_name,
+# 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
+# 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
 	
-	response = requests.get(EDAMAM_URL, params=payload)
-	data = response.json()
+# 	response = requests.get(EDAMAM_URL, params=payload)
+# 	data = response.json()
 	
-	if response.ok:
-		recipe = data["hits"][0]["recipe"]["dietLabels"]
+# 	if response.ok:
+# 		recipe = data["hits"][0]["recipe"]["dietLabels"]
 
-	return render_template("recipe.html", results=recipe)
+# 	return render_template("recipe.html", results=recipe)
 
 @app.route("/")
 def homepage():
@@ -215,6 +217,7 @@ def login_form():
 	# return redirect(f"/users/{new_user.user_id}")
 	flash(f"User succesfully logged in.")
 	return redirect("/plan")
+	#in version 2.0 add option to go whenever
 
 
 
@@ -280,15 +283,36 @@ def search_breakfast():
 	# fat = request.form.get("fat")
 	# protein = request.form.get("protein")
 
-	br_cal = 800
+	user_id = session["user_id"]
+
+	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
+	print(type(user_allergies))
+	#list of allergies
+
+	allergies = []
+	for user_allergy in user_allergies:
+		allergy_name = Allergy.query.filter_by(allergy_id=user_allergy.allergy_id).first()
+		allergies.append(allergy_name.allergy_name)
+	print(allergies)
 
 
-	# br_cal = calories * 0.35
-	# br_carbs = carbohydrates * 0.35
-	# br_fat = fat * 0.35
-	# br_protein = protein * 0.35
+	plan = Plan.query.filter_by(user_id=user_id).first()
+	#what if multiple plans?
+	calories = plan.calories
+	carbohydrates = plan.carbohydrates
+	fat = plan.fat
+	protein = plan.protein
 
-	breakfast = "breakfast"
+	breakfast_limit_calories = calories * 0.35
+	breakfast_limit_carbohydrates = carbohydrates * 0.35
+	breakfast_limit_fat = fat * 0.35
+	breakfast_limit_protein = protein * 0.35
+	sum_limit = breakfast_limit_calories + breakfast_limit_carbohydrates + breakfast_limit_fat + breakfast_limit_protein
+
+	# breakfast = "breakfast"
+	# breakfast = "dinner"
+	# breakfast = "japanese"
+	breakfast = "lunch"
 
 	payload = { 'q': breakfast,
 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
@@ -299,81 +323,127 @@ def search_breakfast():
 
 	results = []
 
+	# num = random.randint(0,10)
 	if response.ok:
 		for n in range(5):
 			recipe = {}
-			rec_cal = data["hits"][n]["recipe"]["calories"]
-			rec_serv = data["hits"][n]["recipe"]["yield"]
 
-			limit_cal = rec_cal/rec_serv
-			
-			if limit_cal > br_cal:
+			recipe_serving = data["hits"][n]["recipe"]["yield"]
+
+			recipe_calories = data["hits"][n]["recipe"]["calories"]
+			recipe_carbohydrates = data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"]
+			recipe_fat = data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"]
+			recipe_protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]	
+
+			recipe_cautions = data["hits"][n]["recipe"]["cautions"]
+
+			calories_per_yield = recipe_calories/recipe_serving
+			carbohydrates_per_yield = recipe_carbohydrates/recipe_serving
+			fat_per_yield = recipe_fat/recipe_serving
+			protein_per_yield = recipe_protein/recipe_serving
+
+			sum_per_yield = calories_per_yield + carbohydrates_per_yield + fat_per_yield + protein_per_yield
+
+			# print(data["hits"][n]["recipe"]["label"])
+			# print(breakfast_limit_calories)
+			# print(calories_per_yield)
+			# print()
+			# print(breakfast_limit_carbohydrates)
+			# print(carbohydrates_per_yield)
+			# print()
+			# print(breakfast_limit_fat)
+			# print(fat_per_yield)
+			# print()
+			# print(breakfast_limit_protein)
+			# print(protein_per_yield)
+			# print()
+
+			# below is ok, dont worry!!!
+			if (calories_per_yield > breakfast_limit_calories) or (carbohydrates_per_yield > breakfast_limit_carbohydrates) or (fat_per_yield > breakfast_limit_fat) or (protein_per_yield > breakfast_limit_protein):
+			# if sum_per_yield > sum_limit:
 				continue
 
-			recipe_name = data["hits"][n]["recipe"]["label"]
-			recipe["recipe_name"] = recipe_name
+			has_allergy = False
 
-			recipe_url = data["hits"][n]["recipe"]["uri"]
-			recipe["recipe_url"] = recipe_url
-			
-			recipe_image = data["hits"][n]["recipe"]["image"]
-			recipe["recipe_image"] = recipe_image
+			for allergy in allergies:
+				print("USER ALLERGIES")
+				print(allergy)
+				print(type(allergy))
+				# for caution in recipe_cautions:
+				# 	print("RECIPE CAUTIONS")
+				# 	print(caution)
+				# 	print(type(caution))
+				# 	if caution == allergy:
+				# 		print("0caution!!!!!!!!!")
+				# 		continue
+				if allergy in recipe_cautions:
+					print("0caution!!!!!!!!!")
+					has_allergy = True
 
-			directions = data["hits"][n]["recipe"]["url"]
-			recipe["directions"] = directions
+			if has_allergy == False:
+				recipe_name = data["hits"][n]["recipe"]["label"]
+				recipe["recipe_name"] = recipe_name
 
-			servings = data["hits"][n]["recipe"]["yield"]
-			recipe["servings"] = servings
+				recipe_url = data["hits"][n]["recipe"]["uri"]
+				recipe["recipe_url"] = recipe_url
+				
+				recipe_image = data["hits"][n]["recipe"]["image"]
+				recipe["recipe_image"] = recipe_image
 
-			calories = data["hits"][n]["recipe"]["calories"]
-			recipe["calories"] = calories
+				directions = data["hits"][n]["recipe"]["url"]
+				recipe["directions"] = directions
 
-			carbohydrates = data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"]
-			recipe["carbohydrates"] = carbohydrates
+				servings = data["hits"][n]["recipe"]["yield"]
+				recipe["servings"] = servings
 
-			fat = data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"]
-			recipe["fat"] = fat
+				calories = data["hits"][n]["recipe"]["calories"]
+				recipe["calories"] = calories
 
-			protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
-			recipe["protein"] = protein
+				carbohydrates = data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"]
+				recipe["carbohydrates"] = carbohydrates
 
-			results.append(recipe)
+				fat = data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"]
+				recipe["fat"] = fat
+
+				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
+				recipe["protein"] = protein
+
+				results.append(recipe)
 
 	return render_template("breakfast.html", results=results)
 
 
-@app.route("/add-breakfast")
-def add_breakfast_to_db():
-	# make a form which display preferable breakfasts
-	# get favorite breakfasts
-
-# #########think about the plan obj
-
-	# for n in range(5):
-	# 	recipe_obj = Recipe(recipe_name=data["hits"][n]["recipe"]["label"],
-	# 						recipe_url=data["hits"][n]["recipe"]["uri"],
-	# 						recipe_image=data["hits"][n]["recipe"]["image"],
-	# 						directions=data["hits"][n]["recipe"]["url"],
-	# 						servings=data["hits"][n]["recipe"]["yield"],
-	# 						calories=data["hits"][1]["recipe"]["calories"],
-	# 						carbohydrates=data["hits"][n]["recipe"]["totalNutrients"]["CHOCDF"]["quantity"],
-	# 						fat=data["hits"][n]["recipe"]["totalNutrients"]["FAT"]["quantity"],
-	# 						protein=data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"])
-	# 	db.session.add(recipe_obj)
-	# db.session.commit()
-
-	pass
+@app.route("/add-meal", methods=["POST"])
+def add_meal_to_db():
+	"""Add selected meal to the database."""
 
 
+	recipe_name = request.form.get["recipe_name"]
+	recipe_url = request.form.get("recipe_url")
+	recipe_image = request.form.get("recipe_image")
+	directions = request.form.get("directions")
+	servings = request.form.get("servings")
+	calories = request.form.get("calories")
+	carbohydrates = request.form.get("carbohydrates")
+	fat = request.form.get("fat")
+	protein = request.form.get("protein")
 
+	print(protein, fat, calories)
 
-	# pass
-	# #how can I query my API based on the calories?
-	# #calories are per whole recipe
+	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	
+	db.session.add(recipe_obj)
+	db.session.commit()
 
-	#look for the recipes with this amount of calories
+	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
 
+	user_id = session["user_id"]
+	plan_id = Plan.query.filter_by(user_id=user_id).first()
 
+	recipe_plan_obj = RecipePlan(plan_id=plan_id, recipe_id=recipe.recipe_id)
+
+	db.session.add(recipe_plan_obj)
+	db.session.commit()
 
 
 #########query just 1 thing - how can I query multiple? FUNCTION MAKE A MEAL FROM YOUR FRIDGE################
