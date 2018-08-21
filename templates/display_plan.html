@@ -3,15 +3,15 @@
 {% block title %}Selection of your breakfast{% endblock %}
 
 {% block content %}
-
-<h1> Your recipes: </h1>
+<a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a>
+<h1> Your mealplan for today: </h1>
 
 {% for result in results %}
 <br>
-	<h1>{{ result["recipe_name"] }}</h1> 
+	<h3>{{ result["recipe_name"] }}</h3> 
 	<img src="{{ result['recipe_image'] }}">
 
-	<form action="/add-breakfast" method="POST">
+<!-- 	<form action="/add-lunch" method="POST">
 	<input type="hidden" name="recipe_name" value="{{ result['recipe_name'] }}">
 	<input type="hidden" name="recipe_url" value="{{ result['recipe_url'] }}">
 	<input type="hidden" name="recipe_image" value="{{ result['recipe_image'] }}">
@@ -22,7 +22,7 @@
 	<input type="hidden" name="fat" value="{{ result['fat'] }}">
 	<input type="hidden" name="protein" value="{{ result['protein'] }}">
 
-	<input type="submit" value="Add">
+	<input type="submit" value="Add"> -->
 
 	</form>
 
