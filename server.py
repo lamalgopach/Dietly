@@ -2,12 +2,16 @@ from pprint import pformat
 import os
 
 import requests
-from flask import Flask, render_template, request, flash, redirect, session
+from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, RecipePlan, Recipe, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, RecipePlan, Recipe, Ingredient, RecipeIngredient, connect_to_db
 
 import random
+
+from sys import argv
+from pprint import pprint
+import json
 
 app = Flask(__name__)
 app.secret_key = "SECRETSECRETSECRET"
@@ -369,6 +373,13 @@ def user_breakfast_choices():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
+				ingredients_dict = {}
+				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
+			
+				for i, ing in enumerate(ingredients):
+					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				recipe["ingredients"] = ingredients_dict
+
 				results.append(recipe)
 
 	return render_template("display_breakfast.html", results=results)
@@ -389,6 +400,14 @@ def add_breakfast_to_db():
 	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
+	ingredients = request.form.get("ingredients")
+
+	new_ingredients = ""
+	for char in ingredients:
+		if char == "'":
+			new_ingredients += '"'
+		else:
+			new_ingredients += char
 
 	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(recipe_obj)
@@ -400,6 +419,19 @@ def add_breakfast_to_db():
 	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
 	db.session.add(recipe_plan_obj)
 	db.session.commit()
+
+	new_ingredients_dict = json.loads(new_ingredients)
+
+	for key, value in new_ingredients_dict.items():
+		
+		ingredient_obj = Ingredient(ingredient_name=key)
+		db.session.add(ingredient_obj)
+		db.session.commit()
+
+		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
+		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
+		db.session.add(recipe_ingredient_obj)
+		db.session.commit()
 
 	return redirect ("/display-lunch")
 # 
@@ -525,6 +557,13 @@ def user_preferences():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
+				ingredients_dict = {}
+				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
+			
+				for i, ing in enumerate(ingredients):
+					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				recipe["ingredients"] = ingredients_dict
+
 				results.append(recipe)
 
 	return render_template("display_lunch.html", results=results)
@@ -544,6 +583,14 @@ def add_lunch_to_db():
 	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
+	ingredients = request.form.get("ingredients")
+
+	new_ingredients = ""
+	for char in ingredients:
+		if char == "'":
+			new_ingredients += '"'
+		else:
+			new_ingredients += char
 
 	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(recipe_obj)
@@ -555,6 +602,18 @@ def add_lunch_to_db():
 	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
 	db.session.add(recipe_plan_obj)
 	db.session.commit()
+	new_ingredients_dict = json.loads(new_ingredients)
+
+	for key, value in new_ingredients_dict.items():
+		
+		ingredient_obj = Ingredient(ingredient_name=key)
+		db.session.add(ingredient_obj)
+		db.session.commit()
+
+		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
+		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
+		db.session.add(recipe_ingredient_obj)
+		db.session.commit()
 
 	return redirect ("/display-dinner")
 
@@ -677,6 +736,13 @@ def user_dinner_preferences():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
+				ingredients_dict = {}
+				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
+			
+				for i, ing in enumerate(ingredients):
+					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				recipe["ingredients"] = ingredients_dict
+
 				results.append(recipe)
 
 	return render_template("display_dinner.html", results=results)
@@ -696,8 +762,17 @@ def add_dinner_to_db():
 	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
+	ingredients = request.form.get("ingredients")
+
+	new_ingredients = ""
+	for char in ingredients:
+		if char == "'":
+			new_ingredients += '"'
+		else:
+			new_ingredients += char
 
 	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	#not add if already exists
 	db.session.add(recipe_obj)
 	db.session.commit()
 
@@ -708,47 +783,79 @@ def add_dinner_to_db():
 	db.session.add(recipe_plan_obj)
 	db.session.commit()
 
+	new_ingredients_dict = json.loads(new_ingredients)
+
+	for key, value in new_ingredients_dict.items():
+		
+		ingredient_obj = Ingredient(ingredient_name=key)
+		db.session.add(ingredient_obj)
+		db.session.commit()
+
+		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
+		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
+		db.session.add(recipe_ingredient_obj)
+		db.session.commit()
+
 	return redirect("/display-plan")
-	# redirect to the whole selected plan
 
 @app.route("/display-plan")
 def show_web_with_whole_plan():
 	"""Display the whole plan for a day."""
-	#display with the 
+	#display with the react
 
 	user_id = session["user_id"]
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 	recipe_plan_lst = RecipePlan.query.filter_by(plan_id=plan.plan_id).all()
 
 	results = []
+
 	for recipe_plan_obj in recipe_plan_lst:
 		recipe = {}
 		recipe_obj = Recipe.query.filter_by(recipe_id=recipe_plan_obj.recipe_id).first()
-		print(recipe_obj)
 		recipe["recipe_name"] = recipe_obj.recipe_name
 		recipe["recipe_image"] = recipe_obj.recipe_image
-		print(recipe)
-		print(type(recipe))
-		print("gosia")
 		results.append(recipe)
-		print("!!!!!!!!!!!!!!!!!!!!!!!!!")
-		print(results)
-	print("oleole")
-	print(results)
-
-
-	# for recipe_lst in recipes_lst:
-	# 	# recipe["recipe_name"] = recipes_lst[recipe_lst].recipe_id
-	# 	# recipe["recipe_image"] = recipes_lst[recipe_lst].recipe_image
-	# 	print(recipes_lst)
-	# 	print(type(recipes_lst))
-	# 	print("gosia")
-
-	# 	results.append(recipe)
-	# print("oleole")
-	# print(results)
 
 	return render_template("display_plan.html", results=results)
+
+@app.route("/shopping-list")
+def get_shopping_list():
+	"""Based on users favorite meals display get the ingredients and sum up if duplicate."""
+
+	##############to be tested!!!!
+
+	user_id = session["user_id"]
+	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
+	recipe_plan_lst = RecipePlan.query.filter_by(plan_id=plan.plan_id).all()
+
+	recipes_ids = []
+
+	for recipe_plan_obj in recipe_plan_lst:
+		recipe_obj = Recipe.query.filter_by(recipe_id=recipe_plan_obj.recipe_id).first()
+		recipes_ids.append(recipe_obj.recipe_id)
+
+	ingredient_ids = []
+	for recipe_id in recipes_ids:
+		recipe_ing_lst = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+		for recipe_ing in recipe_ing_lst:
+			#recipe_ing - object
+			ingredient_ids.append(recipe_ing.ingredient_id)
+
+
+	ingredient_dictionary = {}
+	for ing in ingredient_ids:
+		ingredient = Ingredient.query.filter_by(ingredient_id=ing).one()
+		recipe_ing_obj = RecipeIngredient.query.filter_by(ingredient_id=ingredient.ingredient_id).first()
+		
+		if ingredient.ingredient_name not in ingredient_dictionary:
+			ingredient_dictionary[ingredient.ingredient_name] = recipe_ing_obj.amount
+		else:
+			ingredient_dictionary[ingredient.ingredient_name] += recipe_ing_obj.amount
+			print("oleoleole!!!!!!!!!!!!!!!!")
+
+
+
+	return render_template("display_shopping_list.html", results=ingredient_dictionary)
 	# return render_template("homepage.html")
 
 
@@ -785,7 +892,8 @@ def show_web_with_whole_plan():
 
 
 
-#########query just 1 thing - how can I query multiple? FUNCTION MAKE A MEAL FROM YOUR FRIDGE################
+
+
 
 @app.route("/make-a-meal-from-fridge")
 def show_ing_form():
@@ -869,52 +977,7 @@ def logout():
 
 
 
-@app.route("/")
-def create_meal_plan():
-	"""Based on users preferences search recipes."""
 
-	#the essence of the app
-	#how to get the recipes from db and sum (calories, macros,allergies)
-	#1. get all the recipes from db where allergies AND health label is the same as user`s preference
-	#2. Think about dinner/breakfast/lunch - do they have labels??
-	#3. Proportion of calories - br-lunch-dinner????
-	#....what will be next?
-	# sum a bunch of br+lunch+dinner
-	#check if sum is equal to users preferences
-
-	pass
-
-
-@app.route("/make-a-meal-from-fridge")
-def make_a_meal():
-	"""Make a meal from your fridge"""
-
-	# make an html form
-	# put a checkbox with the ingredients
-	# put a submit button
-	# redirect to the route cooking route
-
-	pass
-
-@app.route("/cook-a-meal-from-fridge")
-def cook_a_meal():
-
-	#get ingredients from the form
-	#search recepies from the database which have those ingredients
-	#list the recipes
-	#redirect to a form which listing recepies
-
-	pass
-
-@app.route("/show-a-meal-from-fridge")
-def show_meal():
-
-	#I am not sure if I need this route
-	# make a form listing the recipes
-	#after clicking favorite recipe recirect to recipe url
-	#recipe url is in database as directions
-
-	pass
 
 if __name__ == "__main__":
 	app.debug = True

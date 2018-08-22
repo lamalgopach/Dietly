@@ -212,12 +212,12 @@ if __name__ == "__main__":
     connect_to_db(app)
     db.create_all()
 
-    name = "pork"
-    set_of_recipes = get_recipe_attributes(name)
-    print_recipe_to_textfile(set_of_recipes)
+    # name = "pork"
+    # set_of_recipes = get_recipe_attributes(name)
+    # print_recipe_to_textfile(set_of_recipes)
 
-    database = "seed_data/database.txt"
-    load_recipes_to_db(database)
+    # database = "seed_data/database.txt"
+    # load_recipes_to_db(database)
 
     # remove_apple()
 

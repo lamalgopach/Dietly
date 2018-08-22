@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Selection of your breakfast{% endblock %}
+
+{% block content %}
+
+<h1> Your shopping list: </h1>
+
+{% for key, value in results.items() %}
+
+	<li>{{ key }} {{ value }} [g]</li>
+
+{% endfor %}
+
+
+{% endblock %}	
