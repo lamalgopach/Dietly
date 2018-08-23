@@ -184,7 +184,7 @@ def login_form():
 
 	if not user:
 		flash("Not such user.")
-		return redirect("/login")
+		return redirect("/register")
 
 	elif user.password != password:
 		flash("Incorrect password!")
@@ -326,12 +326,16 @@ def user_breakfast_choices():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
-				ingredients_dict = {}
-				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
+				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of dictionaries
+				recipe["ingredients"] = ingredients
+
+
+				# ingredients_dict = {}
+				# ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
 			
-				for i, ing in enumerate(ingredients):
-					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				recipe["ingredients"] = ingredients_dict
+				# for i, ing in enumerate(ingredients):
+				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				# recipe["ingredients"] = ingredients_dict
 
 				results.append(recipe)
 
@@ -481,11 +485,12 @@ def user_lunch_preferences():
 				recipe["protein"] = protein
 
 				ingredients_dict = {}
-				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
+				ingredients = data["hits"][n]["recipe"]["ingredients"]#helper list
+				recipe["ingredients"] = ingredients
 			
-				for i, ing in enumerate(ingredients):
-					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				recipe["ingredients"] = ingredients_dict
+				# for i, ing in enumerate(ingredients):
+				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				# recipe["ingredients"] = ingredients_dict
 
 				results.append(recipe)
 
@@ -543,8 +548,6 @@ def user_dinner_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-
-	# 35+25+40
 	dinner_limit_calories = calories * 0.4
 	dinner_limit_carbohydrates = carbohydrates * 0.4
 	dinner_limit_fat = fat * 0.4
@@ -631,12 +634,18 @@ def user_dinner_preferences():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
-				ingredients_dict = {}
-				ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
-			
-				for i, ing in enumerate(ingredients):
-					ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				recipe["ingredients"] = ingredients_dict
+				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of dictionaries
+				recipe["ingredients"] = ingredients
+
+				# for i, ing in enumerate(ingredients):
+				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
+				# 	print(ingredients_dict[ing])
+				# 	print("oleoleoleoeoeoeloeoee,eleokej!!!!!!!!!!!!!!!!")
+				# recipe["ingredients"] = ingredients_dictnts
+
+				# for i, ing in enumerate(ingredients):
+				# 	print(ing["text"])
+				# 	print(ing["weight"])
 
 				results.append(recipe)
 
@@ -666,16 +675,13 @@ def add_dinner_to_db():
 
 def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients):
 
-	new_ingredients = ""
-	for char in ingredients:
-		if char == "'":
-			new_ingredients += '"'
-		else:
-			new_ingredients += char
+	old_recipe = Recipe.query.filter_by(recipe_url=recipe_url).first()
 
-	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	#not add if already exists
-	db.session.add(recipe_obj)
+	if old_recipe is not None:
+		new_recipe_obj = old_recipe
+	else:
+		new_recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+		db.session.add(new_recipe_obj)
 	db.session.commit()
 
 	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
@@ -685,18 +691,58 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 	db.session.add(recipe_plan_obj)
 	db.session.commit()
 
+	# ingredients = ingredients.strip("[]")
+
+	new_ingredients = ""
+	for char in ingredients:
+		if char == "'":
+			new_ingredients += '"'
+		else:
+			new_ingredients += char
+
 	new_ingredients_dict = json.loads(new_ingredients)
 
-	for key, value in new_ingredients_dict.items():
-		
-		ingredient_obj = Ingredient(ingredient_name=key)
-		db.session.add(ingredient_obj)
-		db.session.commit()
+	for ingredient in new_ingredients_dict:
+		ingredient_name = ingredient["text"]
+		amount = ingredient["weight"]
 
-		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
-		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
-		db.session.add(recipe_ingredient_obj)
-		db.session.commit()
+		ingredient = Ingredient.query.filter_by(ingredient_name=ingredient_name).first()
+		if ingredient is None:
+			new_ingredient_obj = Ingredient(ingredient_name=ingredient_name)
+			db.session.add(new_ingredient_obj)
+			db.session.commit()
+
+			ingredient = Ingredient.query.filter_by(ingredient_name=ingredient_name).first()
+			new_recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=amount)
+			db.session.add(new_recipe_ingredient_obj)
+			db.session.commit()
+
+
+
+
+
+
+
+
+
+		# for key, value in ingredient.items():
+		# # ingredient_obj = ingredient[text]
+		# # amount = ingredient[weight]
+		# 	print("oleoleoleoleeeeeeeeeeeee!!!!!!")
+		# # print(ingredient_obj)
+		# # print(amount)
+		# 	print("key")
+		# 	print(key)
+		# 	print("value")
+		# 	print(value)
+
+	# 
+		
+	# 	
+	# 	db.session.add(ingredient_obj)
+	# 	db.session.commit()
+
+
 
 @app.route("/display-plan")
 def show_web_with_whole_plan():
