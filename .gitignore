@@ -1,4 +1,6 @@
 env/
 *pyc
 secrets.sh
-to_do.txt
+
+database.txt
+labels.txt

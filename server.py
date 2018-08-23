@@ -21,23 +21,6 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPL
 
 EDAMAM_URL = "https://api.edamam.com/search"
 
-# @app.route("/show-recipe")
-# def show_recipe():
-# 	"""Show the recipe"""
-
-# 	recipe_name = 'chicken' 
-
-# 	payload = { 'q': recipe_name,
-# 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
-# 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
-	
-# 	response = requests.get(EDAMAM_URL, params=payload)
-# 	data = response.json()
-	
-# 	if response.ok:
-# 		recipe = data["hits"][0]["recipe"]["dietLabels"]
-
-# 	return render_template("recipe.html", results=recipe)
 
 @app.route("/")
 def homepage():
@@ -61,8 +44,6 @@ def register():
 	"""Show register form"""
 
 	return render_template("register_page.html")
-
-
 
 @app.route("/register", methods=["POST"])
 def register_form():
@@ -146,32 +127,32 @@ def handle_options_form():
 	alcohol_free = request.form.get("option1")
 	diet_options.append(alcohol_free)
 
-	balanced = request.form.get("option2")
-	diet_options.append(balanced)
-
-	high_protein = request.form.get("option3")
-	diet_options.append(high_protein)
-
-	low_carb = request.form.get("option4")
-	diet_options.append(low_carb)
-
-	low_fat = request.form.get("option5")
-	diet_options.append(low_fat)
-
-	peanut_free = request.form.get("option6")
+	peanut_free = request.form.get("option2")
 	diet_options.append(peanut_free)
 
-	sugar_conscious = request.form.get("option7")
+	sugar_conscious = request.form.get("option3")
 	diet_options.append(sugar_conscious)
 
-	tree_nut_free = request.form.get("option8")
+	tree_nut_free = request.form.get("option4")
 	diet_options.append(tree_nut_free)
 
-	vegan = request.form.get("option9")
-	diet_options.append(vegan)
+	# vegan = request.form.get("option5")
+	# diet_options.append(vegan)
 
-	vegetarian = request.form.get("option10")
-	diet_options.append(vegetarian)
+	# vegetarian = request.form.get("option6")
+	# diet_options.append(vegetarian)
+
+	# high_protein = request.form.get("option7")
+	# diet_options.append(high_protein)
+
+	# low_carb = request.form.get("option8")
+	# diet_options.append(low_carb)
+
+	# low_fat = request.form.get("option9")
+	# diet_options.append(low_fat)
+
+	# balanced = request.form.get("option10")
+	# diet_options.append(balanced)
 
 	user_id = session["new_user_id"]
 
@@ -209,13 +190,7 @@ def login_form():
 		flash("Incorrect password!")
 		return redirect("/login")
 
-	# elif "user_id" in session:
-	# 	flash("Other user already logged in!")
-	# 	return redirect("/")
-
 	session["user_id"] = user.user_id
-	# flash("User logged in!")
-	# return redirect("/")
 
 	# return redirect(f"/users/{new_user.user_id}")
 	flash(f"User succesfully logged in.")
@@ -245,25 +220,6 @@ def user_breakfast_choices():
 	db.session.add(new_plan)
 	db.session.commit()
 
-	#make a helper function
-
-	#why calories is str??
-	# calories = float(calories)
-
-# 	return render_template("user_plan.html", calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-# 	# render to some recipes
-
-# @app.route("/breakfast")
-# def search_breakfast():
-# 	"""Search breakfast which calories are 35% of user's daily preference."""
-
-# 	# calories = request.form.get("calories")
-# 	# carbohydrates = request.form.get("carbohydrates")
-# 	# fat = request.form.get("fat")
-# 	# protein = request.form.get("protein")
-
-# 	user_id = session["user_id"]
-
 	#change the allergy as the diet or change your mind :)
 	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
 	allergies = []
@@ -279,9 +235,7 @@ def user_breakfast_choices():
 		user_diets.append(diet_name.diet_name)
 		#diet_name is an object and diet name is an attribute
 
-
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
-	#what if multiple plans?
 	calories = plan.calories
 	carbohydrates = plan.carbohydrates
 	fat = plan.fat
@@ -305,7 +259,6 @@ def user_breakfast_choices():
 
 	if response.ok:
 		for n in range(5):
-			# not sure about the range - check later
 			recipe = {}
 
 			recipe_serving = data["hits"][n]["recipe"]["yield"]
@@ -402,36 +355,7 @@ def add_breakfast_to_db():
 	protein = request.form.get("protein")
 	ingredients = request.form.get("ingredients")
 
-	new_ingredients = ""
-	for char in ingredients:
-		if char == "'":
-			new_ingredients += '"'
-		else:
-			new_ingredients += char
-
-	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	db.session.add(recipe_obj)
-	db.session.commit()
-
-	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
-	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
-
-	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
-	db.session.add(recipe_plan_obj)
-	db.session.commit()
-
-	new_ingredients_dict = json.loads(new_ingredients)
-
-	for key, value in new_ingredients_dict.items():
-		
-		ingredient_obj = Ingredient(ingredient_name=key)
-		db.session.add(ingredient_obj)
-		db.session.commit()
-
-		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
-		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
-		db.session.add(recipe_ingredient_obj)
-		db.session.commit()
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
 
 	return redirect ("/display-lunch")
 # 
@@ -440,9 +364,8 @@ def add_breakfast_to_db():
 # display shopping list to user
 
 @app.route("/display-lunch")
-def user_preferences():
+def user_lunch_preferences():
 	"""Get the preferences from the form, search the options for lunch."""
-	pass
 
 	user_id = session["user_id"]
 
@@ -585,35 +508,7 @@ def add_lunch_to_db():
 	protein = request.form.get("protein")
 	ingredients = request.form.get("ingredients")
 
-	new_ingredients = ""
-	for char in ingredients:
-		if char == "'":
-			new_ingredients += '"'
-		else:
-			new_ingredients += char
-
-	recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
-	db.session.add(recipe_obj)
-	db.session.commit()
-
-	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
-	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
-
-	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
-	db.session.add(recipe_plan_obj)
-	db.session.commit()
-	new_ingredients_dict = json.loads(new_ingredients)
-
-	for key, value in new_ingredients_dict.items():
-		
-		ingredient_obj = Ingredient(ingredient_name=key)
-		db.session.add(ingredient_obj)
-		db.session.commit()
-
-		ingredient = Ingredient.query.filter_by(ingredient_name=key).first()
-		recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=value)
-		db.session.add(recipe_ingredient_obj)
-		db.session.commit()
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
 
 	return redirect ("/display-dinner")
 
@@ -764,6 +659,13 @@ def add_dinner_to_db():
 	protein = request.form.get("protein")
 	ingredients = request.form.get("ingredients")
 
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
+
+	return redirect("/display-plan")
+
+
+def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients):
+
 	new_ingredients = ""
 	for char in ingredients:
 		if char == "'":
@@ -796,8 +698,6 @@ def add_dinner_to_db():
 		db.session.add(recipe_ingredient_obj)
 		db.session.commit()
 
-	return redirect("/display-plan")
-
 @app.route("/display-plan")
 def show_web_with_whole_plan():
 	"""Display the whole plan for a day."""
@@ -822,8 +722,6 @@ def show_web_with_whole_plan():
 def get_shopping_list():
 	"""Based on users favorite meals display get the ingredients and sum up if duplicate."""
 
-	##############to be tested!!!!
-
 	user_id = session["user_id"]
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 	recipe_plan_lst = RecipePlan.query.filter_by(plan_id=plan.plan_id).all()
@@ -841,7 +739,6 @@ def get_shopping_list():
 			#recipe_ing - object
 			ingredient_ids.append(recipe_ing.ingredient_id)
 
-
 	ingredient_dictionary = {}
 	for ing in ingredient_ids:
 		ingredient = Ingredient.query.filter_by(ingredient_id=ing).one()
@@ -851,49 +748,8 @@ def get_shopping_list():
 			ingredient_dictionary[ingredient.ingredient_name] = recipe_ing_obj.amount
 		else:
 			ingredient_dictionary[ingredient.ingredient_name] += recipe_ing_obj.amount
-			print("oleoleole!!!!!!!!!!!!!!!!")
-
-
 
 	return render_template("display_shopping_list.html", results=ingredient_dictionary)
-	# return render_template("homepage.html")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 @app.route("/make-a-meal-from-fridge")
 def show_ing_form():
@@ -942,7 +798,6 @@ def make_a_meal_from_fridge():
 	response = requests.get(EDAMAM_URL, params=payload)
 	data = response.json()
 
-
 	if response.ok:
 		for n in range(5):
 			recipe = {}
@@ -962,7 +817,6 @@ def make_a_meal_from_fridge():
 
 	return render_template("make_a_meal_display_recipes.html", results=results)
 
-
 @app.route("/logout")
 def logout():
     """Log out user."""
@@ -973,11 +827,6 @@ def logout():
 
 	# add a button Log Out
 	# jquery
-
-
-
-
-
 
 if __name__ == "__main__":
 	app.debug = True
