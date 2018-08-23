@@ -220,13 +220,11 @@ def user_breakfast_choices():
 	db.session.add(new_plan)
 	db.session.commit()
 
-	#change the allergy as the diet or change your mind :)
-	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
-	allergies = []
-	for user_allergy in user_allergies:
-		allergy_name = Allergy.query.filter_by(allergy_id=user_allergy.allergy_id).first()
-		allergies.append(allergy_name.allergy_name)
-
+	allergies = UserAllergy.query.filter_by(user_id=user_id).all()
+	user_allergies = []
+	for allergy in allergies:
+		allergy_name = Allergy.query.filter_by(allergy_id=allergy.allergy_id).first()
+		user_allergies.append(allergy_name.allergy_name)
 
 	diets = UserDiet.query.filter_by(user_id=user_id).all()
 	user_diets = []
@@ -248,7 +246,14 @@ def user_breakfast_choices():
 
 	breakfast = "breakfast"
 
-	payload = { 'q': breakfast,
+	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
+
+	return render_template("display_breakfast.html", results=results)
+
+def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, meal_limit_fat, meal_limit_protein, user_allergies, user_diets):
+	"""Helper function"""
+
+	payload = { 'q': meal,
 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
 
@@ -281,13 +286,13 @@ def user_breakfast_choices():
 			protein_per_yield = recipe_protein/recipe_serving
 
 			# below is ok, dont worry!!!
-			if (calories_per_yield > breakfast_limit_calories) or (carbohydrates_per_yield > breakfast_limit_carbohydrates) or (fat_per_yield > breakfast_limit_fat) or (protein_per_yield > breakfast_limit_protein):
+			if (calories_per_yield > meal_limit_calories) or (carbohydrates_per_yield > meal_limit_carbohydrates) or (fat_per_yield > meal_limit_fat) or (protein_per_yield > meal_limit_protein):
 				continue
 
 			has_allergy = False
 
-			for allergy in allergies:
-				if allergy in recipe_cautions:
+			for user_allergy in user_allergies:
+				if user_allergy in recipe_cautions:
 					has_allergy = True
 
 			has_diet_label = False
@@ -329,17 +334,11 @@ def user_breakfast_choices():
 				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of dictionaries
 				recipe["ingredients"] = ingredients
 
-
-				# ingredients_dict = {}
-				# ingredients = data["hits"][n]["recipe"]["ingredientLines"]#helper list
-			
-				# for i, ing in enumerate(ingredients):
-				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				# recipe["ingredients"] = ingredients_dict
-
 				results.append(recipe)
 
-	return render_template("display_breakfast.html", results=results)
+	return results
+
+
 
 
 @app.route("/add-breakfast", methods=["POST"])
@@ -484,14 +483,9 @@ def user_lunch_preferences():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
-				ingredients_dict = {}
 				ingredients = data["hits"][n]["recipe"]["ingredients"]#helper list
 				recipe["ingredients"] = ingredients
 			
-				# for i, ing in enumerate(ingredients):
-				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				# recipe["ingredients"] = ingredients_dict
-
 				results.append(recipe)
 
 	return render_template("display_lunch.html", results=results)
@@ -538,7 +532,6 @@ def user_dinner_preferences():
 		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
 		user_diets.append(diet_name.diet_name)
 		#diet_name is an object and diet name is an attribute
-
 
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
@@ -634,18 +627,8 @@ def user_dinner_preferences():
 				protein = data["hits"][n]["recipe"]["totalNutrients"]["PROCNT"]["quantity"]
 				recipe["protein"] = protein
 
-				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of dictionaries
+				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of multiple dictionaries
 				recipe["ingredients"] = ingredients
-
-				# for i, ing in enumerate(ingredients):
-				# 	ingredients_dict[ing] = data["hits"][n]["recipe"]["ingredients"][i]["weight"]
-				# 	print(ingredients_dict[ing])
-				# 	print("oleoleoleoeoeoeloeoee,eleokej!!!!!!!!!!!!!!!!")
-				# recipe["ingredients"] = ingredients_dictnts
-
-				# for i, ing in enumerate(ingredients):
-				# 	print(ing["text"])
-				# 	print(ing["weight"])
 
 				results.append(recipe)
 
@@ -716,33 +699,6 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 			new_recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=amount)
 			db.session.add(new_recipe_ingredient_obj)
 			db.session.commit()
-
-
-
-
-
-
-
-
-
-		# for key, value in ingredient.items():
-		# # ingredient_obj = ingredient[text]
-		# # amount = ingredient[weight]
-		# 	print("oleoleoleoleeeeeeeeeeeee!!!!!!")
-		# # print(ingredient_obj)
-		# # print(amount)
-		# 	print("key")
-		# 	print(key)
-		# 	print("value")
-		# 	print(value)
-
-	# 
-		
-	# 	
-	# 	db.session.add(ingredient_obj)
-	# 	db.session.commit()
-
-
 
 @app.route("/display-plan")
 def show_web_with_whole_plan():
@@ -858,9 +814,6 @@ def make_a_meal_from_fridge():
 
 			results.append(recipe)
 
-#later: add photo to the recipe
-#later: do the interactive link
-
 	return render_template("make_a_meal_display_recipes.html", results=results)
 
 @app.route("/logout")
@@ -881,3 +834,5 @@ if __name__ == "__main__":
 	connect_to_db(app)
     # db.create_all()
 	app.run(host='0.0.0.0', port=5000)
+
+	#829 the end
