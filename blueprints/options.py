@@ -1,4 +1,5 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, session
+from model import db, UserDiet
 
 options_page = Blueprint('options_page', __name__, template_folder='templates')
 
