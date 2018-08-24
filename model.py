@@ -99,21 +99,21 @@ class Plan(db.Model):
         return f"""<Plan ID={self.plan_id}>"""#add plan name if necessary
 
 #6 middle #2
-class RecipePlan(db.Model):
+class PlanRecipe(db.Model):
     # PlanRecipe
     """Associate table. Recipes and Plan"""
 
-    __tablename__ = "recipes_plans"
+    __tablename__ = "plans_recipes"
 
     recipe_plan_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     plan_id = db.Column(db.Integer, db.ForeignKey('plans.plan_id'))
     recipe_id = db.Column(db.Integer, db.ForeignKey('recipes.recipe_id'))
 
-    plan = db.relationship("Plan", backref=db.backref("recipes_plans", order_by=recipe_plan_id))
-    recipe = db.relationship("Recipe", backref=db.backref("recipes_plans", order_by=recipe_plan_id))
+    plan = db.relationship("Plan", backref=db.backref("plans_recipes", order_by=recipe_plan_id))
+    recipe = db.relationship("Recipe", backref=db.backref("plans_recipes", order_by=recipe_plan_id))
 
     def __repr__(self):
-        return f"""<Recipe - Plan ID={self.recipe_plan_id}>"""
+        return f"""<Plan-Recipe ID={self.recipe_plan_id}>"""
 
 #7
 class Allergy(db.Model):
