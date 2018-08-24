@@ -205,7 +205,7 @@ def user_options():
 	return render_template("plan.html")
 
 @app.route("/plan", methods=["POST"])
-def user_breakfast_choices():
+def user_breakfast_preferences():
 	"""Get the preferences from the form, search the options for breakfast."""
 
 	user_id = session["user_id"]
@@ -220,18 +220,9 @@ def user_breakfast_choices():
 	db.session.add(new_plan)
 	db.session.commit()
 
-	allergies = UserAllergy.query.filter_by(user_id=user_id).all()
-	user_allergies = []
-	for allergy in allergies:
-		allergy_name = Allergy.query.filter_by(allergy_id=allergy.allergy_id).first()
-		user_allergies.append(allergy_name.allergy_name)
+	user_allergies = find_user_allergies(user_id)
 
-	diets = UserDiet.query.filter_by(user_id=user_id).all()
-	user_diets = []
-	for diet in diets:
-		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
-		user_diets.append(diet_name.diet_name)
-		#diet_name is an object and diet name is an attribute
+	user_diets = find_user_diets(user_id)
 
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 	calories = plan.calories
@@ -282,20 +273,9 @@ def user_lunch_preferences():
 
 	user_id = session["user_id"]
 
-	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
-	allergies = []
-	for user_allergy in user_allergies:
-		allergy_name = Allergy.query.filter_by(allergy_id=user_allergy.allergy_id).first()
-		allergies.append(allergy_name.allergy_name)
+	user_allergies = find_user_allergies(user_id)
 
-
-	diets = UserDiet.query.filter_by(user_id=user_id).all()
-	user_diets = []
-	for diet in diets:
-		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
-		user_diets.append(diet_name.diet_name)
-		#diet_name is an object and diet name is an attribute
-
+	user_diets = find_user_diets(user_id)
 
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
@@ -346,19 +326,9 @@ def user_dinner_preferences():
 
 	user_id = session["user_id"]
 
-	user_allergies = UserAllergy.query.filter_by(user_id=user_id).all()
-	allergies = []
-	for user_allergy in user_allergies:
-		allergy_name = Allergy.query.filter_by(allergy_id=user_allergy.allergy_id).first()
-		allergies.append(allergy_name.allergy_name)
+	user_allergies = find_user_allergies(user_id)
 
-
-	diets = UserDiet.query.filter_by(user_id=user_id).all()
-	user_diets = []
-	for diet in diets:
-		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
-		user_diets.append(diet_name.diet_name)
-		#diet_name is an object and diet name is an attribute
+	user_diets = find_user_diets(user_id)
 
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
@@ -379,6 +349,29 @@ def user_dinner_preferences():
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
 
 	return render_template("display_dinner.html", results=results)
+
+def find_user_allergies(user_id):
+	"""Helper function"""
+
+	allergies = UserAllergy.query.filter_by(user_id=user_id).all()
+	user_allergies = []
+	for allergy in allergies:
+		allergy_name = Allergy.query.filter_by(allergy_id=allergy.allergy_id).first()
+		user_allergies.append(allergy_name.allergy_name)
+
+	return user_allergies
+
+def find_user_diets(user_id):
+	"""Helper function"""
+
+	diets = UserDiet.query.filter_by(user_id=user_id).all()
+	user_diets = []
+	for diet in diets:
+		diet_name = Diet.query.filter_by(diet_id=diet.diet_id).first()
+		user_diets.append(diet_name.diet_name)
+		#diet_name is an object and diet name is an attribute
+
+	return user_diets
 
 @app.route("/add-dinner", methods=["POST"])
 def add_dinner_to_db():
@@ -669,4 +662,4 @@ if __name__ == "__main__":
     # db.create_all()
 	app.run(host='0.0.0.0', port=5000)
 
-	#672 the end
+	#665 the end
