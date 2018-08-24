@@ -8,7 +8,7 @@
 
 {% for key, value in results.items() %}
 
-	<li>{{ key }} {{ value }} [g]</li>
+	<li>{{ key }} ==> {{ value|round }} [g]</li>
 
 {% endfor %}
 
