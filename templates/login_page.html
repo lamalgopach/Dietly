@@ -5,7 +5,7 @@
 {% block content %}
 
 
-<h1> Welcome! Let's login! ;) </h1>
+<h1> Welcome {{ user }}! Let's login! ;) </h1>
 <form action="/login" method="POST">
 
 	Email:<input type="text", name="email">

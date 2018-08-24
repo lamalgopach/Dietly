@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Selection of your breakfast{% endblock %}
+{% block title %}Shopping list{% endblock %}
 
 {% block content %}
 
@@ -8,7 +8,7 @@
 
 {% for key, value in results.items() %}
 
-	<li>{{ key }} ==> {{ value|round }} [g]</li>
+	<li>{{ key }} ({{ value|round }}g)</li>
 
 {% endfor %}
 

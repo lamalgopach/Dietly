@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, RecipePlan, Recipe, Ingredient, RecipeIngredient, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, PlanRecipe, Recipe, Ingredient, RecipeIngredient, connect_to_db
 
 import random
 
@@ -81,7 +81,6 @@ def show_allergy_form():
 def handle_allergy_form():
 	"""Handle user's allergies."""
 
-######################### maybe MORE ELEGANT??
 	allergens = []
 
 	gluten = request.form.get("allergen1")
@@ -171,7 +170,12 @@ def handle_options_form():
 def login():
 	"""Show login form."""
 
-	return render_template("login_page.html")
+	if "new_user_id" in session:
+		user_id = session["new_user_id"]
+		user_name = User.query.filter_by(user_id=user_id).first().fname
+	else:
+		user_name = "User"
+	return render_template("login_page.html", user=user_name)
 
 @app.route("/login", methods=["POST"])
 def login_form():
@@ -193,18 +197,22 @@ def login_form():
 	session["user_id"] = user.user_id
 
 	# return redirect(f"/users/{new_user.user_id}")
-	flash(f"User succesfully logged in.")
-	return redirect("/plan")
+	flash("{} succesfully logged in.".format(user.fname))
+	return redirect("/preferences")
 	#in version 2.0 add option to go whenever
 
 
-@app.route("/plan")
+@app.route("/preferences")
 def user_options():
 	"""Show users options"""
 
-	return render_template("plan.html")
+	user_id = session["user_id"]
+	user = User.query.filter_by(user_id=user_id).first().fname
 
-@app.route("/plan", methods=["POST"])
+	return render_template("preferences.html", user=user)
+
+
+@app.route("/display-breakfast", methods=["POST"])
 def user_breakfast_preferences():
 	"""Get the preferences from the form, search the options for breakfast."""
 
@@ -239,7 +247,10 @@ def user_breakfast_preferences():
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
 
-	return render_template("display_breakfast.html", results=results)
+	user_id = session["user_id"]
+	user = User.query.filter_by(user_id=user_id).first().fname
+
+	return render_template("display_breakfast.html", results=results, user=user)
 
 
 @app.route("/add-breakfast", methods=["POST"])
@@ -262,10 +273,7 @@ def add_breakfast_to_db():
 	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
 
 	return redirect ("/display-lunch")
-# 
-# copy for dinner and lunch
-# display to the user all recipes with the links
-# display shopping list to user
+
 
 @app.route("/display-lunch")
 def user_lunch_preferences():
@@ -285,7 +293,6 @@ def user_lunch_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	# 35+25+40
 	lunch_limit_calories = calories * 0.25
 	lunch_limit_carbohydrates = carbohydrates * 0.25
 	lunch_limit_fat = fat * 0.25
@@ -295,7 +302,10 @@ def user_lunch_preferences():
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
-	return render_template("display_lunch.html", results=results)
+	user_id = session["user_id"]
+	user = User.query.filter_by(user_id=user_id).first().fname
+
+	return render_template("display_lunch.html", results=results, user=user)
 
 @app.route("/add-lunch", methods=["POST"])
 def add_lunch_to_db():
@@ -348,7 +358,10 @@ def user_dinner_preferences():
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
 
-	return render_template("display_dinner.html", results=results)
+	user_id = session["user_id"]
+	user = User.query.filter_by(user_id=user_id).first().fname
+
+	return render_template("display_dinner.html", results=results, user=user)
 
 def find_user_allergies(user_id):
 	"""Helper function"""
@@ -407,7 +420,7 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 	results = []
 
 	if response.ok:
-		for n in range(5):
+		for n in range(10):
 			recipe = {}
 
 			recipe_serving = data["hits"][n]["recipe"]["yield"]
@@ -497,11 +510,9 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
-	recipe_plan_obj = RecipePlan(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
-	db.session.add(recipe_plan_obj)
+	plan_recipe_obj = PlanRecipe(plan_id=plan.plan_id, recipe_id=recipe.recipe_id)
+	db.session.add(plan_recipe_obj)
 	db.session.commit()
-
-	# ingredients = ingredients.strip("[]")
 
 	new_ingredients = ""
 	for char in ingredients:
@@ -534,18 +545,24 @@ def show_web_with_whole_plan():
 
 	user_id = session["user_id"]
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
-	recipe_plan_lst = RecipePlan.query.filter_by(plan_id=plan.plan_id).all()
+	plan_recipe_lst = PlanRecipe.query.filter_by(plan_id=plan.plan_id).all()
 
 	results = []
 
-	for recipe_plan_obj in recipe_plan_lst:
+	for plan_recipe_obj in plan_recipe_lst:
 		recipe = {}
-		recipe_obj = Recipe.query.filter_by(recipe_id=recipe_plan_obj.recipe_id).first()
+		recipe_obj = Recipe.query.filter_by(recipe_id=plan_recipe_obj.recipe_id).first()
 		recipe["recipe_name"] = recipe_obj.recipe_name
 		recipe["recipe_image"] = recipe_obj.recipe_image
+		recipe["directions"] = recipe_obj.directions
+		recipe["servings"] = recipe_obj.servings
+		recipe["calories_per_serving"] = recipe_obj.calories / recipe_obj.servings
 		results.append(recipe)
 
-	return render_template("display_plan.html", results=results)
+	user_id = session["user_id"]
+	user = User.query.filter_by(user_id=user_id).first().fname
+
+	return render_template("display_plan.html", results=results, user=user)
 
 @app.route("/shopping-list")
 def get_shopping_list():
@@ -553,17 +570,19 @@ def get_shopping_list():
 
 	user_id = session["user_id"]
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
-	recipe_plan_lst = RecipePlan.query.filter_by(plan_id=plan.plan_id).all()
+	plan_recipe_lst = PlanRecipe.query.filter_by(plan_id=plan.plan_id).all()
 
 	recipes_ids = []
 
-	for recipe_plan_obj in recipe_plan_lst:
-		recipe_obj = Recipe.query.filter_by(recipe_id=recipe_plan_obj.recipe_id).first()
+	for plan_recipe_obj in plan_recipe_lst:
+		recipe_obj = Recipe.query.filter_by(recipe_id=plan_recipe_obj.recipe_id).first()
 		recipes_ids.append(recipe_obj.recipe_id)
 
 	ingredient_ids = []
 	for recipe_id in recipes_ids:
 		recipe_ing_lst = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
+		recipe_name = Recipe.query.filter_by(recipe_id=recipe_id).first().recipe_name
+
 		for recipe_ing in recipe_ing_lst:
 			#recipe_ing - object
 			ingredient_ids.append(recipe_ing.ingredient_id)
@@ -611,7 +630,6 @@ def make_a_meal_from_fridge():
 	ingredients.append(pepper)
 	ingredients.append(parsley)
 	ingredients.append(potato)
-	# can I do this more elegant?
 
 	results = []
 
@@ -628,7 +646,7 @@ def make_a_meal_from_fridge():
 	data = response.json()
 
 	if response.ok:
-		for n in range(5):
+		for n in range(7):
 			recipe = {}
 			recipe_url = data["hits"][n]["recipe"]["url"]
 			recipe["recipe_url"] = recipe_url
@@ -659,7 +677,6 @@ if __name__ == "__main__":
 	app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 	DebugToolbarExtension(app)
 	connect_to_db(app)
-    # db.create_all()
 	app.run(host='0.0.0.0', port=5000)
 
-	#665 the end
+	#658 the end

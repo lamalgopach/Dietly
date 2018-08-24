@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ user }}'s preferences{% endblock %}
+
+{% block content %}
+
+
+<h1> {{ user }}, let's create a mealplan!;) </h1>
+
+	
+
+
+	<form action="/display-breakfast" method="POST">
+		<h3> You can name your plan! </h3>
+		<input type="text" name="plan_name"><br><br>
+
+		<h2>How many calories do you want to eat per day?</h2>
+		<input type="number" name="calories" min=1400 max=4000 required><br><br>
+
+		<h5>How many percent of this would you like to spend on carbohydrates?</h5>
+		<input id="carbs" type="number" name="carbohydrates" min=0 required><br><br>
+
+		<h5>What about fat?</h5>
+		<input id="fat" type="number" name="fat" min=0 required><br><br>
+		
+		<h5>And protein?</h5>
+		<input id="protein" type="number" name="protein" min=0 required><br><br>
+
+		<h5>The recomendation of the Institute of Medicine:</h5>
+		<h7>40-65% of daily calories from carbohydrates (1 gram of carbohydrate is 4 calories)</h7><br>
+		<h7>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h7><br>
+		<h7>20-35% of daily calories from fat (fat provides 9 calories per gram)</h7><br><br>
+		
+		<input type="submit" value="Submit">
+	</form>
+
+
+
+
+<!-- 	<script type="text/javascript">
+		
+		let carbs = document.querySelector("input#carbs");
+		let fat = document.querySelector("input#fat");
+
+		let fatMax = fat.getAttribute('max');
+
+
+		function newFatMax(carbs){
+
+			fatMax = 100 - 50
+		}
+
+		// $.('#carbs').on('change', newFatMax);
+
+		// let myBtn = document.querySelector('#special-btn');
+
+		carbs.addEventListener('change', newFatMax);
+
+// $("input#carbs").val()
+
+	</script>> -->
+
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
+
+		let carbs = $('#carbs').val()
+		let fat = $('#fat').val()
+
+		let carbsMax = $('#carbs').attr('max');
+		let fatMax = $('#fat').attr('max');
+
+		function newFatMax(carbs){
+			fatMax = 100-carbs
+		}
+
+		$('#carbs').on('change', newFatMax);
+
+	</script>
+
+
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
+
+		$('#carbs').on('change', function(){
+			let carbs = $('#carbs').val()
+			let fatMax = $('#fat').attr('max');
+			fatMax = 100-carbs	
+		});
+
+	</script>
+
+{% endblock %}	
