@@ -238,14 +238,15 @@ def user_breakfast_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	breakfast_limit_calories = calories * 0.35
-	breakfast_limit_carbohydrates = carbohydrates * 0.35
-	breakfast_limit_fat = fat * 0.35
-	breakfast_limit_protein = protein * 0.35
+	breakfast_limit_calories = calories 
+	breakfast_limit_carbohydrates = carbohydrates 
+	breakfast_limit_fat = fat 
+	breakfast_limit_protein = protein 
 
 	breakfast = "breakfast"
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
+
 
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
@@ -293,10 +294,10 @@ def user_lunch_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	lunch_limit_calories = calories * 0.25
-	lunch_limit_carbohydrates = carbohydrates * 0.25
-	lunch_limit_fat = fat * 0.25
-	lunch_limit_protein = protein * 0.25
+	lunch_limit_calories = calories 
+	lunch_limit_carbohydrates = carbohydrates 
+	lunch_limit_fat = fat 
+	lunch_limit_protein = protein 
 
 	lunch = "lunch"
 	#add a form to get a word
@@ -348,10 +349,10 @@ def user_dinner_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	dinner_limit_calories = calories * 0.4
-	dinner_limit_carbohydrates = carbohydrates * 0.4
-	dinner_limit_fat = fat * 0.4
-	dinner_limit_protein = protein * 0.4
+	dinner_limit_calories = calories
+	dinner_limit_carbohydrates = carbohydrates
+	dinner_limit_fat = fat
+	dinner_limit_protein = protein
 
 	dinner = "dinner"
 	#add a form to get a word
@@ -420,7 +421,7 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 	results = []
 
 	if response.ok:
-		for n in range(10):
+		for n in range(5):
 			recipe = {}
 
 			recipe_serving = data["hits"][n]["recipe"]["yield"]
@@ -646,7 +647,7 @@ def make_a_meal_from_fridge():
 	data = response.json()
 
 	if response.ok:
-		for n in range(7):
+		for n in range(5):
 			recipe = {}
 			recipe_url = data["hits"][n]["recipe"]["url"]
 			recipe["recipe_url"] = recipe_url
