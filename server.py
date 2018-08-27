@@ -223,6 +223,7 @@ def user_breakfast_preferences():
 	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
+	breakfast = request.form.get("breakfast")
 
 	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(new_plan)
@@ -243,7 +244,7 @@ def user_breakfast_preferences():
 	breakfast_limit_fat = fat 
 	breakfast_limit_protein = protein 
 
-	breakfast = "breakfast"
+	# breakfast = "breakfast"
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
 

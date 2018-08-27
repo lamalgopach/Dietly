@@ -18,20 +18,37 @@
 		<input type="number" name="calories" min=1400 max=4000 required><br><br>
 
 		<h5>How many percent of this would you like to spend on carbohydrates?</h5>
-		<input id="carbs" type="number" name="carbohydrates" min=0 required><br><br>
+		<input id="carbs" type="number" name="carbohydrates" min=0 max=200 required><br><br>
 
 		<h5>What about fat?</h5>
-		<input id="fat" type="number" name="fat" min=0 required><br><br>
+		<input id="fat" type="number" name="fat" min=0 max=150 required><br><br>
 		
 		<h5>And protein?</h5>
-		<input id="protein" type="number" name="protein" min=0 required><br><br>
+		<input id="protein" type="number" name="protein" min=0 max=150 required><br><br>
 
 		<h5>The recomendation of the Institute of Medicine:</h5>
 		<h7>40-65% of daily calories from carbohydrates (1 gram of carbohydrate is 4 calories)</h7><br>
 		<h7>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h7><br>
 		<h7>20-35% of daily calories from fat (fat provides 9 calories per gram)</h7><br><br>
-		
+
+		<h6>Do you want your breakfast with...<h6>
+
+  		<input type="radio" name="breakfast" value="sausages"> sausage<br>
+		<input type="radio" name="breakfast" value="pancakes"> pancake<br>
+		<input type="radio" name="breakfast" value="omelette"> omelette<br>
+		<input type="radio" name="breakfast" value="sandwich"> sandwich<br>
+		<input type="radio" name="breakfast" value="panini"> panini<br>
+
+
+
+
+
+
+	
 		<input type="submit" value="Submit">
+
+
+
 	</form>
 
 
@@ -60,7 +77,7 @@
 
 	</script>> -->
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
+<!-- 	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
 
 		let carbs = $('#carbs').val()
 		let fat = $('#fat').val()
@@ -74,7 +91,7 @@
 
 		$('#carbs').on('change', newFatMax);
 
-	</script>
+	</script> -->
 
 
 	<script src="https://code.jquery.com/jquery-3.2.1.min.js">

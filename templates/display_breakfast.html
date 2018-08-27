@@ -57,11 +57,15 @@
 
 	{% endfor %}
 
+	<form action="http://0.0.0.0:5000/preferences">
+    	<input type="submit" value="Let me change my mind!" />
+	</form>
+
 	<script>
+		// make sure autofocus works in HTML5
 		$('#myModal').on('shown.bs.modal', function () {
 		  $('#myInput').trigger('focus')
 		})
-
 	</script>
 
 {% endblock %}	
