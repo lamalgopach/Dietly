@@ -7,49 +7,113 @@
 
 <h1> {{ user }}, let's create a mealplan!;) </h1>
 
-	
+
+
+
+<!--       <script>
+        $(document).ready(function(){
+         $("#hide").click(function(){
+           $("#recomendation").hide();
+           });
+           $("#show").click(function(){
+           $("#recomendation").show();
+           });
+        });
+      </script>	 -->
+
 
 
 	<form action="/display-breakfast" method="POST">
 		<h3> You can name your plan! </h3>
-		<input type="text" name="plan_name"><br><br>
+		<input type="text" name="plan_name" required><br><br>
 
 		<h2>How many calories do you want to eat per day?</h2>
 		<input type="number" name="calories" min=1400 max=4000 required><br><br>
 
-		<h5>How many percent of this would you like to spend on carbohydrates?</h5>
-		<input id="carbs" type="number" name="carbohydrates" min=0 max=200 required><br><br>
 
-		<h5>What about fat?</h5>
-		<input id="fat" type="number" name="fat" min=0 max=150 required><br><br>
-		
-		<h5>And protein?</h5>
-		<input id="protein" type="number" name="protein" min=0 max=150 required><br><br>
 
-		<h5>The recomendation of the Institute of Medicine:</h5>
-		<h7>40-65% of daily calories from carbohydrates (1 gram of carbohydrate is 4 calories)</h7><br>
-		<h7>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h7><br>
-		<h7>20-35% of daily calories from fat (fat provides 9 calories per gram)</h7><br><br>
+			<h4> Type calories in percentages or grams? </h4>
+			<span class="macros">
+				<input type="radio" name="macro" value="percentage" required> %<br>
+				<input type="radio" name="macro" value="grams"> g<br>
+			</span>
+				<div>
+				<h3>How many percent of this would you like to spend on carbohydrates?</h3>
+				<input id="carbs" type="number" name="carbohydrates" min=0 max=200 required><br><br>
 
-		<h6>Do you want your breakfast with...<h6>
+				<h3>What about fat?</h3>
+				<input id="fat" type="number" name="fat" min=0 max=200 required><br><br>
 
-  		<input type="radio" name="breakfast" value="sausages"> sausage<br>
+				<h3>And protein?</h3>
+				<input id="protein" type="number" name="protein" min=0 max=200 required><br><br>
+				</div>
+			
+
+
+
+
+
+
+<!-- 		<button id="button">grams/percentage</button> -->
+
+
+
+
+		<h4>The recomendation of the Institute of Medicine:</h4>
+		<h4>40-65% of daily calories from carbohydrates (1 gram of carbohydrate is 4 calories)</h4><br>
+		<h4>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h4><br>
+		<h4>20-35% of daily calories from fat (fat provides 9 calories per gram)</h4><br><br>
+
+<!-- 		<button id="show">Show</button>
+      	<button id="hide">Hide</button> -->
+		<h6>Do you want your breakfast with...</h6>
+<!-- 		<div id="recomendation"> -->
+  		<input type="radio" name="breakfast" value="sausages" required> sausage<br>
 		<input type="radio" name="breakfast" value="pancakes"> pancake<br>
 		<input type="radio" name="breakfast" value="omelette"> omelette<br>
 		<input type="radio" name="breakfast" value="sandwich"> sandwich<br>
 		<input type="radio" name="breakfast" value="panini"> panini<br>
+		<input type="radio" name="breakfast" value="avocado"> anything with avocado!<br>
+		<input type="radio" name="breakfast" value="egg"> any type of eggs<br>
+		<input type="radio" name="breakfast" value="scrambled,eggs"> scrambled eggs<br>
+		<input type="radio" name="breakfast" value="breakfast"> I don't have any preferences<br><br>
+<!-- 		</div> -->
 
-
-
-
-
-
-	
 		<input type="submit" value="Submit">
 
 
-
 	</form>
+		<script>
+		$(document).ready(function() {
+			$(".macros input").on("click", function() {
+
+				if ($(".macros input:checked").val() === "percentage"){
+			        $("#carbs").attr("max", 100);
+			        $("#fat").attr("max", 100);
+			        $("#protein").attr("max", 100);
+
+	    		}
+		  		else if ($(".macros input:checked").val() === "grams"){
+			        $("#carbs").attr("max", 200);
+			        $("#fat").attr("max", 200);
+			        $("#protein").attr("max", 200);
+	    		}	
+
+	    	})
+		});
+
+		</script>
+
+		<br><br><br>
+
+
+
+
+<!--     <script>
+		$( "button" ).click(function() {
+		  $( "h4" ).toggle();
+		});
+	</script> -->
 
 
 
@@ -94,7 +158,13 @@
 	</script> -->
 
 
-	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
+
+
+
+
+
+
+<!-- 	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
 
 		$('#carbs').on('change', function(){
 			let carbs = $('#carbs').val()
@@ -102,6 +172,6 @@
 			fatMax = 100-carbs	
 		});
 
-	</script>
+	</script> -->
 
 {% endblock %}	
