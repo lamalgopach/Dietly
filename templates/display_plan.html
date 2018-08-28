@@ -12,11 +12,20 @@
 	<a href="{{ result['directions'] }}">{{ result['recipe_name'] }}</a><br><br>
 
 	Number of servings: {{ result['servings'] }}<br>
-	Calories per serving: {{result['calories_per_serving'] | round }}
+	Calories per serving: {{result['calories_per_serving'] | round }}kcal <br>
+    Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
+    Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
+    Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
+
 
 	</li>
 	<img src="{{ result['recipe_image'] }}"><br><br><br>
 {% endfor %}
 
+	<h3>Whole plan nutrition facts:</h3>
+		Calories: {{ calories_sum | round}}
+		<br>Carbohydrates: {{ carbohydrates_sum | round}}
+		<br>Fat: {{ fat_sum | round}}
+		<br>Protein: {{ protein_sum | round}}
 
 {% endblock %}	

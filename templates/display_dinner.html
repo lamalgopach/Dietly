@@ -30,7 +30,7 @@
 	<br>
 
 	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
-	  Show me the number of calories per serving!
+	  See nutrition facts
 	</button>
 
 	<!-- Modal -->
@@ -38,13 +38,16 @@
 	  <div class="modal-dialog" role="document">
 	    <div class="modal-content">
 	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Number of calories</h5>
+	        <h5 class="modal-title" id="exampleModalLabel">Nutrition facts</h5>
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
 	          <span aria-hidden="true">&times;</span>
 	        </button>
 	      </div>
 	      <div class="modal-body">
-	        {{ (result['calories'] / result['servings'])|round }}
+	        Calories: {{ (result['calories'] / result['servings'])|round }}kcal <br>
+	        Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
+	        Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
+	        Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
 	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -57,10 +60,10 @@
 	{% endfor %}
 
 	<script>
+		// make sure autofocus works in HTML5
 		$('#myModal').on('shown.bs.modal', function () {
 		  $('#myInput').trigger('focus')
 		})
-
 	</script>
 
 
