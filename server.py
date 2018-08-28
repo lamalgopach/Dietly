@@ -239,10 +239,10 @@ def user_breakfast_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	breakfast_limit_calories = calories 
-	breakfast_limit_carbohydrates = carbohydrates 
-	breakfast_limit_fat = fat 
-	breakfast_limit_protein = protein 
+	breakfast_limit_calories = calories * 0.35
+	breakfast_limit_carbohydrates = carbohydrates * 0.35 
+	breakfast_limit_fat = fat * 0.35
+	breakfast_limit_protein = protein * 0.35 
 
 	# breakfast = "breakfast"
 
@@ -281,6 +281,8 @@ def add_breakfast_to_db():
 def user_lunch_preferences():
 	"""Get the preferences from the form, search the options for lunch."""
 
+	# lunch = request.form.get("lunch")
+
 	user_id = session["user_id"]
 
 	user_allergies = find_user_allergies(user_id)
@@ -295,12 +297,20 @@ def user_lunch_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	lunch_limit_calories = calories 
-	lunch_limit_carbohydrates = carbohydrates 
-	lunch_limit_fat = fat 
-	lunch_limit_protein = protein 
 
-	lunch = "lunch"
+	lunch_limit_carbohydrates = carbohydrates * 0.3 
+	lunch_limit_fat = fat * 0.3
+	lunch_limit_protein = protein * 0.3 
+
+	#get unused calories and macros
+
+	plan_recipe = PlanRecipe.query.filter_by(plan_id=plan.plan_id).first()
+	# remember in the next steps there are many recipes
+	breakfast_recipe = Recipe.query.filter_by(recipe_id=plan_recipe.recipe_id).first()
+	
+	lunch_limit_calories = get_unused_calories(breakfast_recipe, calories, 0.35)
+
+	lunch = "chicken"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -308,6 +318,20 @@ def user_lunch_preferences():
 	user = User.query.filter_by(user_id=user_id).first().fname
 
 	return render_template("display_lunch.html", results=results, user=user)
+
+def get_unused_calories(meal_recipe, calories, a):
+	"""Get the calories and macros from the last meal and add them to the limit."""
+
+
+
+	recipe_calories = meal_recipe.calories
+	recipe_servings = meal_recipe.servings
+	recipe_calories_per_servings = recipe_calories / recipe_servings
+	calories_left_from_meal = calories * a - recipe_calories_per_servings
+	next_meal_limit_calories = calories * a + calories_left_from_meal
+
+	return next_meal_limit_calories
+
 
 @app.route("/add-lunch", methods=["POST"])
 def add_lunch_to_db():
@@ -334,8 +358,9 @@ def add_lunch_to_db():
 @app.route("/display-dinner")
 def user_dinner_preferences():
 	"""Get the preferences from the form, search the options for dinner."""
-	pass
 
+	# dinner = request.form.get("dinner")
+	
 	user_id = session["user_id"]
 
 	user_allergies = find_user_allergies(user_id)
@@ -350,12 +375,12 @@ def user_dinner_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	dinner_limit_calories = calories
-	dinner_limit_carbohydrates = carbohydrates
-	dinner_limit_fat = fat
-	dinner_limit_protein = protein
+	dinner_limit_calories = calories * 0.35
+	dinner_limit_carbohydrates = carbohydrates * 0.35
+	dinner_limit_fat = fat * 0.35
+	dinner_limit_protein = protein * 0.35
 
-	dinner = "dinner"
+	dinner = "pizza"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
