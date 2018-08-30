@@ -5,7 +5,7 @@ import requests
 from flask import Flask, render_template, request, flash, redirect, session, jsonify
 from flask_debugtoolbar import DebugToolbarExtension
 
-from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, PlanRecipe, Recipe, Ingredient, RecipeIngredient, connect_to_db
+from model import db, User, Allergy, UserAllergy, Plan, UserDiet, Diet, PlanRecipe, Recipe, Ingredient, RecipeIngredient, RecipeAllergy, RecipeDiet, connect_to_db
 
 import random
 
@@ -173,6 +173,7 @@ def login():
 	if "new_user_id" in session:
 		user_id = session["new_user_id"]
 		user_name = User.query.filter_by(user_id=user_id).first().fname
+		del session["new_user_id"]
 	else:
 		user_name = "User"
 	return render_template("login_page.html", user=user_name)
@@ -231,12 +232,6 @@ def calculate_and_display_user_mealplans():
 
 	results = calculate_calories_from_recipes_depend_on_plan(user_id)
 
-	print(results)
-	for result in results:
-
-		for r in result:
-			print(r)
-	
 	return render_template("calculated_mealplan.html", results=results)
 
 def calculate_calories_from_recipes_depend_on_plan(user_id):
@@ -246,6 +241,9 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 
 	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
+	user_allergies = find_user_allergies(user_id)
+
+	user_diets = find_user_diets(user_id)
 
 	plan_calories = plan.calories
 	plan_carbohydrates = plan.carbohydrates
@@ -253,9 +251,7 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 	plan_protein = plan.protein
 
 
-
 	list_of_recipes = []
-
 
 
 	for recipe1 in all_recipes_list:
@@ -271,55 +267,79 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 		fat_per_yield1 = fat1 / serv1
 		protein_per_yield1 = protein1 / serv1
 
-		for recipe2 in all_recipes_list:
+		recipe_cautions = RecipeAllergy.query.filter_by(recipe_id=recipe1.recipe_id).all()
 
-			serv2 = recipe2.servings
-			kcal2 = recipe2.calories
-			carbs2 = recipe2.carbohydrates
-			fat2 = recipe2.fat
-			protein2 = recipe2.protein
-			
-			kcal_per_yield2 = kcal2 / serv2
-			carbohydrates_per_yield2 = carbs2 / serv2
-			fat_per_yield2 = fat2 / serv2
-			protein_per_yield2 = protein2 / serv2
+		has_allergy = False
+		for user_allergy in user_allergies:
+			if user_allergy in recipe_cautions:
+				has_allergy = True
 
+		# has_diet_label = False
+		
+		# count = 0
+		# for user_diet in user_diets:
+		# 	if user_diet in recipe_labels:
+		# 		count += 1
+		# if count == len(user_diets):
+		# 	has_diet_label = True
 
-			if kcal_per_yield1 + kcal_per_yield2 < plan_calories and carbohydrates_per_yield1 + carbohydrates_per_yield2 < plan_carbohydrates and fat_per_yield1 + fat_per_yield2 < plan_fat and protein_per_yield1 + protein_per_yield2 < plan_protein:
-
-				for recipe3 in all_recipes_list:
-
-					serv3 = recipe3.servings
-					kcal3 = recipe3.calories
-					carbs3 = recipe3.carbohydrates
-					fat3 = recipe3.fat
-					protein3 = recipe3.protein
+		if has_allergy == False:
+		# and has_diet_label == True:
 
 
+			for recipe2 in all_recipes_list:
 
-					kcal_per_yield3 = kcal3 / serv3
-					carbohydrates_per_yield3 = carbs3 / serv3
-					fat_per_yield3 = fat3 / serv3
-					protein_per_yield3 = protein3 / serv3
+				serv2 = recipe2.servings
+				kcal2 = recipe2.calories
+				carbs2 = recipe2.carbohydrates
+				fat2 = recipe2.fat
+				protein2 = recipe2.protein
+				
+				kcal_per_yield2 = kcal2 / serv2
+				carbohydrates_per_yield2 = carbs2 / serv2
+				fat_per_yield2 = fat2 / serv2
+				protein_per_yield2 = protein2 / serv2
 
-					if kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 <= plan_calories + 100 and kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 >= plan_calories - 100:
 
-						if carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 <= plan_carbohydrates + 20 and carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 >= plan_carbohydrates - 20:
-							if fat_per_yield1 + fat_per_yield2 + fat_per_yield3 <= plan_fat + 20 and fat_per_yield1 + fat_per_yield2 + fat_per_yield3 >= plan_fat - 20: 
-								if protein_per_yield1 + protein_per_yield2 + protein_per_yield3 <= plan_protein + 20 and protein_per_yield1 + protein_per_yield2 + protein_per_yield3 >= plan_protein - 20:
-									if recipe1 != recipe2 and recipe2 != recipe3 and recipe3 != recipe1:
-										set_recipe = set()
-										set_recipe.add(recipe1)
-										set_recipe.add(recipe2)
-										set_recipe.add(recipe3)
-										if set_recipe not in list_of_recipes:
-											list_of_recipes.append(set_recipe)
+
+
+				# for rec_lab_1 in recipe_labels_1:
+				# 	recipe_labels.append(rec_lab_1)
+
+
+				if kcal_per_yield1 + kcal_per_yield2 < plan_calories and carbohydrates_per_yield1 + carbohydrates_per_yield2 < plan_carbohydrates and fat_per_yield1 + fat_per_yield2 < plan_fat and protein_per_yield1 + protein_per_yield2 < plan_protein:
+
+					for recipe3 in all_recipes_list:
+
+						serv3 = recipe3.servings
+						kcal3 = recipe3.calories
+						carbs3 = recipe3.carbohydrates
+						fat3 = recipe3.fat
+						protein3 = recipe3.protein
+
+
+
+						kcal_per_yield3 = kcal3 / serv3
+						carbohydrates_per_yield3 = carbs3 / serv3
+						fat_per_yield3 = fat3 / serv3
+						protein_per_yield3 = protein3 / serv3
+
+						if kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 <= plan_calories + 100 and kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 >= plan_calories - 100:
+
+							if carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 <= plan_carbohydrates + 20 and carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 >= plan_carbohydrates - 20:
+								if fat_per_yield1 + fat_per_yield2 + fat_per_yield3 <= plan_fat + 20 and fat_per_yield1 + fat_per_yield2 + fat_per_yield3 >= plan_fat - 20: 
+									if protein_per_yield1 + protein_per_yield2 + protein_per_yield3 <= plan_protein + 20 and protein_per_yield1 + protein_per_yield2 + protein_per_yield3 >= plan_protein - 20:
+										if recipe1 != recipe2 and recipe2 != recipe3 and recipe3 != recipe1:
+											set_recipe = set()
+											set_recipe.add(recipe1)
+											set_recipe.add(recipe2)
+											set_recipe.add(recipe3)
+											if set_recipe not in list_of_recipes:
+												list_of_recipes.append(set_recipe)
 
 
 	results = []
 	for set_of_recipes in list_of_recipes:
-		# print(set_of_recipes)
-
 
 		result = []
 		for recipe in set_of_recipes:
@@ -339,24 +359,38 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 
 		results.append(result)
 
-
 	return results
 
 
+@app.route("/add-mealplan", methods=["POST"])
+def get_user_pick_and_add_mealplan_to_db():
+	"""Get picked mealplan and add recipes to the databse."""
 
+	user_id = session["user_id"]
+	recipes = request.form.get("recipes_list")
+	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
 
-# next function - add selected recipe to the db
+	new_recipes = ""
+	for char in recipes:
+		if char == "'":
+			new_recipes += '"'
+		else:
+			new_recipes += char
 
+	new_recipes_list = json.loads(new_recipes)
 
-		# new_connection1 = PlanRecipe(recipe_id=recipe1.recipe_id, plan_id=plan.plan_id)
-	# new_connection2 = PlanRecipe(recipe_id=recipe2.recipe_id, plan_id=plan.plan_id)
-	# new_connection3 = PlanRecipe(recipe_id=recipe3.recipe_id, plan_id=plan.plan_id)						
+	for recipe in new_recipes_list:
 
-	# db.session.add(new_connection1)
-	# db.session.add(new_connection2)
-	# db.session.add(new_connection3)
+		recipe = Recipe.query.filter_by(recipe_name=recipe["name"]).first()
+		new_connection = PlanRecipe(recipe_id=recipe.recipe_id, plan_id=plan.plan_id)	
+
+		db.session.add(new_connection)
   										
-	# db.session.commit()
+	db.session.commit()
+
+
+	return render_template("homepage.html")
+
 
 
 
@@ -374,7 +408,7 @@ def user_breakfast_preferences():
 	# breakfast = request.form.get("breakfast")
 	cal_or_perc = request.form.get("macro")
 
-	breakfast = "hamburger"
+	breakfast = "protein"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -429,8 +463,10 @@ def add_breakfast_to_db():
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
 	ingredients = request.form.get("ingredients")
+	cautions = request.form.get("cautions")
+	diets = request.form.get("diets")
 
-	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients, cautions, diets)
 
 	return redirect ("/display-lunch")
 
@@ -469,7 +505,7 @@ def user_lunch_preferences():
 	lunch_limit_fat = fat * 0.65 - fat_used_in_breakfast
 	lunch_limit_protein = protein * 0.65 - protein_used_in_breakfast
 
-	lunch = "sushi"
+	lunch = "pasta"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -589,7 +625,7 @@ def user_dinner_preferences():
 	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
 	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
 
-	dinner = "soup"
+	dinner = "margherita"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
@@ -650,9 +686,6 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
 
-	print(payload)
-	print("blablab1111111111111111111111111111111111111111")
-
 	response = requests.get(EDAMAM_URL, params=payload)
 	data = response.json()
 
@@ -692,6 +725,7 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 					has_allergy = True
 
 			has_diet_label = False
+
 			count = 0
 			for user_diet in user_diets:
 				if user_diet in recipe_labels:
@@ -730,23 +764,55 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 				ingredients = data["hits"][n]["recipe"]["ingredients"]#this is a list of dictionaries
 				recipe["ingredients"] = ingredients
 
+				recipe["cautions"] = recipe_cautions
+
+				recipe["diets"] = recipe_labels
+
 				results.append(recipe)
 
 	return results
 
 
-
-
-def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients):
+def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients, cautions, diets):
 	"""Helper function."""
 
 	old_recipe = Recipe.query.filter_by(recipe_url=recipe_url).first()
+
+	new_cautions = ""
+	for char in cautions:
+		if char == "'":
+			new_cautions += '"'
+		else:
+			new_cautions += char
+
+	new_cautions_lst = json.loads(new_cautions)
+
+	print(new_cautions_lst)
+	print(type(new_cautions_lst))
+	print("gosiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+
+
 
 	if old_recipe is not None:
 		new_recipe_obj = old_recipe
 	else:
 		new_recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 		db.session.add(new_recipe_obj)
+		db.session.commit()
+		for caution in new_cautions_lst:
+			print(caution)
+
+			allergy = Allergy.query.filter_by(allergy_name=caution).first()
+
+			print("blaaaaaaaaaaaaaaaaaaaaaaaaa")
+			print(allergy)
+			new_caution_recipe_obj = RecipeAllergy(recipe_id=new_recipe_obj.recipe_id, allergy_id=allergy.allergy_id)
+			db.session.add(new_caution_recipe_obj)
+
+
+
+
 	db.session.commit()
 
 	recipe = Recipe.query.filter_by(recipe_name=recipe_name).first()
@@ -779,6 +845,11 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 			new_recipe_ingredient_obj = RecipeIngredient(recipe_id=recipe.recipe_id, ingredient_id=ingredient.ingredient_id, amount=amount)
 			db.session.add(new_recipe_ingredient_obj)
 			db.session.commit()
+
+
+
+
+
 
 @app.route("/display-plan")
 def show_web_with_whole_plan():
@@ -925,8 +996,6 @@ def logout():
     flash("Logged Out.")
     return redirect("/")
 
-	# add a button Log Out
-	# jquery
 
 if __name__ == "__main__":
 	app.debug = True
