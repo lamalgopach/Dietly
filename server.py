@@ -210,7 +210,7 @@ def user_options():
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
-	return render_template("preferences_copy.html", user=user)
+	return render_template("preferences.html", user=user)
 
 @app.route("/display-mealplan", methods=["POST"])
 def calculate_and_display_user_mealplans():

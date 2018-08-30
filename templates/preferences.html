@@ -7,23 +7,7 @@
 
 <h1> {{ user }}, let's create a mealplan!;) </h1>
 
-
-
-
-<!--       <script>
-        $(document).ready(function(){
-         $("#hide").click(function(){
-           $("#recomendation").hide();
-           });
-           $("#show").click(function(){
-           $("#recomendation").show();
-           });
-        });
-      </script>	 -->
-
-
-
-	<form action="/display-breakfast" method="POST">
+	<form id="preferences" method="POST">
 		<h3> You can name your plan! </h3>
 		<input type="text" name="plan_name" required><br><br>
 
@@ -39,35 +23,22 @@
 			</span>
 				<div>
 				<h3>How many percent of this would you like to spend on carbohydrates?</h3>
-				<input id="carbs" type="number" name="carbohydrates" min=0 max=200 required><br><br>
+				<input id="carbs" type="number" name="carbohydrates" min=0  required><br><br>
 
 				<h3>What about fat?</h3>
-				<input id="fat" type="number" name="fat" min=0 max=200 required><br><br>
+				<input id="fat" type="number" name="fat" value=0 min=0 required><br><br>
 
 				<h3>And protein?</h3>
-				<input id="protein" type="number" name="protein" min=0 max=200 required><br><br>
+				<input id="protein" type="number" name="protein" value=0 min=0 required><br><br>
 				</div>
 			
-
-
-
-
-
-
-<!-- 		<button id="button">grams/percentage</button> -->
-
-
-
-
 		<h4>The recomendation of the Institute of Medicine:</h4>
 		<h4>40-65% of daily calories from carbohydrates (1 gram of carbohydrate is 4 calories)</h4><br>
 		<h4>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h4><br>
 		<h4>20-35% of daily calories from fat (fat provides 9 calories per gram)</h4><br><br>
 
-<!-- 		<button id="show">Show</button>
-      	<button id="hide">Hide</button> -->
 		<h6>Do you want your breakfast with...</h6>
-<!-- 		<div id="recomendation"> -->
+
   		<input type="radio" name="breakfast" value="sausages" required> sausage<br>
 		<input type="radio" name="breakfast" value="pancakes"> pancake<br>
 		<input type="radio" name="breakfast" value="omelette"> omelette<br>
@@ -77,9 +48,26 @@
 		<input type="radio" name="breakfast" value="egg"> any type of eggs<br>
 		<input type="radio" name="breakfast" value="scrambled,eggs"> scrambled eggs<br>
 		<input type="radio" name="breakfast" value="breakfast"> I don't have any preferences<br><br>
-<!-- 		</div> -->
 
-		<input type="submit" value="Submit">
+		<input type="button" id="breakfast" value="Show me just a breakfast!">
+		<input type="submit" id="mealplan" value="Show me whole mealplan!">
+
+		<script >
+
+
+			let form = document.querySelector("#preferences");
+			$("#breakfast").on("click", function() {
+				form.setAttribute('action', '/display-breakfast');
+				form.submit();
+			});
+
+			$("#preferences").on("submit", function() {
+				form.setAttribute('action', '/display-mealplan');
+			});
+
+
+
+		</script>
 
 
 	</form>
@@ -87,91 +75,66 @@
 		$(document).ready(function() {
 			$(".macros input").on("click", function() {
 
-				if ($(".macros input:checked").val() === "percentage"){
+				if ($(".macros input:checked").val() === "percentage") {
+
 			        $("#carbs").attr("max", 100);
 			        $("#fat").attr("max", 100);
 			        $("#protein").attr("max", 100);
 
+			        let total = 100
+
+			        let carbs = $("#carbs").val();
+			        let fat = $("#fat").val();
+			        let protein = $("#protein").val();
+
+
+
+			        console.log(carbs, fat, protein);
+
+					// about carbs
+					$("#fat").on("change", function() {
+						$("#carbs").attr("max", 100-$('#fat').val());
+					});
+
+					$("#protein").on("change", function() {
+						$("#carbs").attr("max", 100-$('#protein').val());
+					});
+
+					// about fat
+					$("#carbs").on("change", function() {
+						$("#fat").attr("max", 100-$('#carbs').val());
+					});
+
+					$("#protein").on("change", function() {
+						if ($('#fat').attr('max') === 100){
+							$("#fat").attr("max", 100-$('#protein').val());
+					}	else if ($('#fat').attr('max') !== 100){
+							$("#fat").attr("max", 100-$('#protein').val())
+					}
+					});
+
+					// about protein
+					$("#carbs").on("change", function() {
+						$("#protein").attr("max", 100-$('#carbs').val());
+					});
+
+					$("#fat").on("change", function() {
+						$("#protein").attr("max", 100-$('#fat').val());
+					});	
+
+
 	    		}
 		  		else if ($(".macros input:checked").val() === "grams"){
 			        $("#carbs").attr("max", 200);
-			        $("#fat").attr("max", 200);
-			        $("#protein").attr("max", 200);
+			        $("#fat").attr("max", 100);
+			        $("#protein").attr("max", 100);
 	    		}	
 
-	    	})
+	    	});
 		});
 
 		</script>
 
 		<br><br><br>
-
-
-
-
-<!--     <script>
-		$( "button" ).click(function() {
-		  $( "h4" ).toggle();
-		});
-	</script> -->
-
-
-
-
-<!-- 	<script type="text/javascript">
-		
-		let carbs = document.querySelector("input#carbs");
-		let fat = document.querySelector("input#fat");
-
-		let fatMax = fat.getAttribute('max');
-
-
-		function newFatMax(carbs){
-
-			fatMax = 100 - 50
-		}
-
-		// $.('#carbs').on('change', newFatMax);
-
-		// let myBtn = document.querySelector('#special-btn');
-
-		carbs.addEventListener('change', newFatMax);
-
-// $("input#carbs").val()
-
-	</script>> -->
-
-<!-- 	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
-
-		let carbs = $('#carbs').val()
-		let fat = $('#fat').val()
-
-		let carbsMax = $('#carbs').attr('max');
-		let fatMax = $('#fat').attr('max');
-
-		function newFatMax(carbs){
-			fatMax = 100-carbs
-		}
-
-		$('#carbs').on('change', newFatMax);
-
-	</script> -->
-
-
-
-
-
-
-
-
-<!-- 	<script src="https://code.jquery.com/jquery-3.2.1.min.js">
-
-		$('#carbs').on('change', function(){
-			let carbs = $('#carbs').val()
-			let fatMax = $('#fat').attr('max');
-			fatMax = 100-carbs	
-		});
-
-	</script> -->
 
 {% endblock %}	
