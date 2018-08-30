@@ -135,23 +135,23 @@ def handle_options_form():
 	tree_nut_free = request.form.get("option4")
 	diet_options.append(tree_nut_free)
 
-	# vegan = request.form.get("option5")
-	# diet_options.append(vegan)
+	vegan = request.form.get("option5")
+	diet_options.append(vegan)
 
-	# vegetarian = request.form.get("option6")
-	# diet_options.append(vegetarian)
+	vegetarian = request.form.get("option6")
+	diet_options.append(vegetarian)
 
-	# high_protein = request.form.get("option7")
-	# diet_options.append(high_protein)
+	high_protein = request.form.get("option7")
+	diet_options.append(high_protein)
 
-	# low_carb = request.form.get("option8")
-	# diet_options.append(low_carb)
+	low_carb = request.form.get("option8")
+	diet_options.append(low_carb)
 
-	# low_fat = request.form.get("option9")
-	# diet_options.append(low_fat)
+	low_fat = request.form.get("option9")
+	diet_options.append(low_fat)
 
-	# balanced = request.form.get("option10")
-	# diet_options.append(balanced)
+	balanced = request.form.get("option10")
+	diet_options.append(balanced)
 
 	user_id = session["new_user_id"]
 
@@ -209,7 +209,155 @@ def user_options():
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
-	return render_template("preferences.html", user=user)
+	return render_template("preferences_copy.html", user=user)
+
+@app.route("/display-mealplan", methods=["POST"])
+def calculate_and_display_user_mealplans():
+	"""Calculate calories and macros and return list of user's mealplans."""
+
+	user_id = session["user_id"]
+
+	plan_name = request.form.get("plan_name")
+	calories = float(request.form.get("calories"))
+	carbohydrates = float(request.form.get("carbohydrates"))
+	fat = float(request.form.get("fat"))
+	protein = float(request.form.get("protein"))
+	cal_or_perc = request.form.get("macro")
+
+
+	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
+	db.session.add(new_plan)
+	db.session.commit()
+
+	results = calculate_calories_from_recipes_depend_on_plan(user_id)
+
+	print(results)
+	for result in results:
+
+		for r in result:
+			print(r)
+	
+	return render_template("calculated_mealplan.html", results=results)
+
+def calculate_calories_from_recipes_depend_on_plan(user_id):
+	"""Get all the recipes from db, get number of calories, check which recipes which could create mealplan."""
+
+	all_recipes_list = Recipe.query.all()
+
+	plan = Plan.query.filter_by(user_id=user_id).order_by(Plan.plan_id.desc()).first()
+
+
+	plan_calories = plan.calories
+	plan_carbohydrates = plan.carbohydrates
+	plan_fat = plan.fat
+	plan_protein = plan.protein
+
+
+
+	list_of_recipes = []
+
+
+
+	for recipe1 in all_recipes_list:
+		
+		serv1 = recipe1.servings
+		kcal1 = recipe1.calories
+		carbs1 = recipe1.carbohydrates
+		fat1 = recipe1.fat
+		protein1 = recipe1.protein
+		
+		kcal_per_yield1 = kcal1 / serv1
+		carbohydrates_per_yield1 = carbs1 / serv1
+		fat_per_yield1 = fat1 / serv1
+		protein_per_yield1 = protein1 / serv1
+
+		for recipe2 in all_recipes_list:
+
+			serv2 = recipe2.servings
+			kcal2 = recipe2.calories
+			carbs2 = recipe2.carbohydrates
+			fat2 = recipe2.fat
+			protein2 = recipe2.protein
+			
+			kcal_per_yield2 = kcal2 / serv2
+			carbohydrates_per_yield2 = carbs2 / serv2
+			fat_per_yield2 = fat2 / serv2
+			protein_per_yield2 = protein2 / serv2
+
+
+			if kcal_per_yield1 + kcal_per_yield2 < plan_calories and carbohydrates_per_yield1 + carbohydrates_per_yield2 < plan_carbohydrates and fat_per_yield1 + fat_per_yield2 < plan_fat and protein_per_yield1 + protein_per_yield2 < plan_protein:
+
+				for recipe3 in all_recipes_list:
+
+					serv3 = recipe3.servings
+					kcal3 = recipe3.calories
+					carbs3 = recipe3.carbohydrates
+					fat3 = recipe3.fat
+					protein3 = recipe3.protein
+
+
+
+					kcal_per_yield3 = kcal3 / serv3
+					carbohydrates_per_yield3 = carbs3 / serv3
+					fat_per_yield3 = fat3 / serv3
+					protein_per_yield3 = protein3 / serv3
+
+					if kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 <= plan_calories + 100 and kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 >= plan_calories - 100:
+
+						if carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 <= plan_carbohydrates + 20 and carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 >= plan_carbohydrates - 20:
+							if fat_per_yield1 + fat_per_yield2 + fat_per_yield3 <= plan_fat + 20 and fat_per_yield1 + fat_per_yield2 + fat_per_yield3 >= plan_fat - 20: 
+								if protein_per_yield1 + protein_per_yield2 + protein_per_yield3 <= plan_protein + 20 and protein_per_yield1 + protein_per_yield2 + protein_per_yield3 >= plan_protein - 20:
+									if recipe1 != recipe2 and recipe2 != recipe3 and recipe3 != recipe1:
+										set_recipe = set()
+										set_recipe.add(recipe1)
+										set_recipe.add(recipe2)
+										set_recipe.add(recipe3)
+										if set_recipe not in list_of_recipes:
+											list_of_recipes.append(set_recipe)
+
+
+	results = []
+	for set_of_recipes in list_of_recipes:
+		# print(set_of_recipes)
+
+
+		result = []
+		for recipe in set_of_recipes:
+			recipes = {}
+
+			recipes["name"] = recipe.recipe_name
+			recipes["url"] = recipe.recipe_url
+			recipes["image"] = recipe.recipe_image
+			recipes["directions"] = recipe.directions
+			recipes["servings"] = recipe.servings
+			recipes["calories"] = recipe.calories
+			recipes["carbohydrates"] = recipe.carbohydrates
+			recipes["fat"] = recipe.fat
+			recipes["protein"] = recipe.protein
+
+			result.append(recipes)
+
+		results.append(result)
+
+
+	return results
+
+
+
+
+# next function - add selected recipe to the db
+
+
+		# new_connection1 = PlanRecipe(recipe_id=recipe1.recipe_id, plan_id=plan.plan_id)
+	# new_connection2 = PlanRecipe(recipe_id=recipe2.recipe_id, plan_id=plan.plan_id)
+	# new_connection3 = PlanRecipe(recipe_id=recipe3.recipe_id, plan_id=plan.plan_id)						
+
+	# db.session.add(new_connection1)
+	# db.session.add(new_connection2)
+	# db.session.add(new_connection3)
+  										
+	# db.session.commit()
+
 
 
 @app.route("/display-breakfast", methods=["POST"])
@@ -223,7 +371,19 @@ def user_breakfast_preferences():
 	carbohydrates = request.form.get("carbohydrates")
 	fat = request.form.get("fat")
 	protein = request.form.get("protein")
-	breakfast = request.form.get("breakfast")
+	# breakfast = request.form.get("breakfast")
+	cal_or_perc = request.form.get("macro")
+
+	breakfast = "hamburger"
+
+	if cal_or_perc == "percentage":
+		carbohydrates = float(calories) * float(carbohydrates) / 400
+		#divide by 100 because 100% and div by 4 because 1 g carb is 4 calories
+		fat = float(calories) * float(fat) / 900
+		#1 g fat is 9 kcal
+		protein = float(calories) * float(protein) / 400
+
+
 
 	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(new_plan)
@@ -243,8 +403,6 @@ def user_breakfast_preferences():
 	breakfast_limit_carbohydrates = carbohydrates * 0.35 
 	breakfast_limit_fat = fat * 0.35
 	breakfast_limit_protein = protein * 0.35 
-
-	# breakfast = "breakfast"
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
 
@@ -297,20 +455,21 @@ def user_lunch_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-
-	lunch_limit_carbohydrates = carbohydrates * 0.3 
-	lunch_limit_fat = fat * 0.3
-	lunch_limit_protein = protein * 0.3 
-
-	#get unused calories and macros
-
 	plan_recipe = PlanRecipe.query.filter_by(plan_id=plan.plan_id).first()
 	# remember in the next steps there are many recipes
 	breakfast_recipe = Recipe.query.filter_by(recipe_id=plan_recipe.recipe_id).first()
 	
-	lunch_limit_calories = get_unused_calories(breakfast_recipe, calories, 0.35)
+	calories_used_in_breakfast = calculate_used_calories(breakfast_recipe, calories)
+	carbohydrates_used_in_breakfast = calculate_used_carbohydrates(breakfast_recipe, carbohydrates)
+	fat_used_in_breakfast = calculate_used_fat(breakfast_recipe, fat)
+	protein_used_in_breakfast = calculate_used_protein(breakfast_recipe, protein)
 
-	lunch = "chicken"
+	lunch_limit_calories = calories * 0.65 - calories_used_in_breakfast
+	lunch_limit_carbohydrates = carbohydrates * 0.65 - carbohydrates_used_in_breakfast
+	lunch_limit_fat = fat * 0.65 - fat_used_in_breakfast
+	lunch_limit_protein = protein * 0.65 - protein_used_in_breakfast
+
+	lunch = "sushi"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -319,18 +478,45 @@ def user_lunch_preferences():
 
 	return render_template("display_lunch.html", results=results, user=user)
 
-def get_unused_calories(meal_recipe, calories, a):
-	"""Get the calories and macros from the last meal and add them to the limit."""
-
-
+def calculate_used_calories(meal_recipe, calories):
+	"""Get the calories from the last meal and add them to the limit."""
 
 	recipe_calories = meal_recipe.calories
-	recipe_servings = meal_recipe.servings
-	recipe_calories_per_servings = recipe_calories / recipe_servings
-	calories_left_from_meal = calories * a - recipe_calories_per_servings
-	next_meal_limit_calories = calories * a + calories_left_from_meal
 
-	return next_meal_limit_calories
+	recipe_servings = meal_recipe.servings
+	recipe_calories_per_serving = recipe_calories / recipe_servings
+
+	return recipe_calories_per_serving
+
+def calculate_used_carbohydrates(meal_recipe, carbohydrates):
+	"""Get the carbohydrates from the last meal and add them to the limit."""
+
+	recipe_carbohydrates = meal_recipe.carbohydrates
+
+	recipe_servings = meal_recipe.servings
+	recipe_carbohydrates_per_serving = recipe_carbohydrates / recipe_servings
+
+	return recipe_carbohydrates_per_serving
+
+def calculate_used_fat(meal_recipe, fat):
+	"""Get the fat from the last meal and add them to the limit."""
+
+	recipe_fat = meal_recipe.fat
+
+	recipe_servings = meal_recipe.servings
+	recipe_fat_per_serving = recipe_fat / recipe_servings
+
+	return recipe_fat_per_serving
+
+def calculate_used_protein(meal_recipe, protein):
+	"""Get the protein from the last meal and add them to the limit."""
+
+	recipe_protein = meal_recipe.protein
+
+	recipe_servings = meal_recipe.servings
+	recipe_protein_per_serving = recipe_protein / recipe_servings
+
+	return recipe_protein_per_serving
 
 
 @app.route("/add-lunch", methods=["POST"])
@@ -343,11 +529,11 @@ def add_lunch_to_db():
 	recipe_url = request.form.get("recipe_url")
 	recipe_image = request.form.get("recipe_image")
 	directions = request.form.get("directions")
-	servings = request.form.get("servings")
-	calories = request.form.get("calories")
-	carbohydrates = request.form.get("carbohydrates")
-	fat = request.form.get("fat")
-	protein = request.form.get("protein")
+	servings = float(request.form.get("servings"))
+	calories = float(request.form.get("calories"))
+	carbohydrates = float(request.form.get("carbohydrates"))
+	fat = float(request.form.get("fat"))
+	protein = float(request.form.get("protein"))
 	ingredients = request.form.get("ingredients")
 
 	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
@@ -375,12 +561,35 @@ def user_dinner_preferences():
 	fat = plan.fat
 	protein = plan.protein
 
-	dinner_limit_calories = calories * 0.35
-	dinner_limit_carbohydrates = carbohydrates * 0.35
-	dinner_limit_fat = fat * 0.35
-	dinner_limit_protein = protein * 0.35
 
-	dinner = "pizza"
+	plan_recipes = PlanRecipe.query.filter_by(plan_id=plan.plan_id).all()
+
+	for plan_recipe in range(len(plan_recipes)):
+
+		if plan_recipe == 0:
+			breakfast_recipe = Recipe.query.filter_by(recipe_id=plan_recipes[plan_recipe].recipe_id).first()
+
+
+		else:
+			lunch_recipe = Recipe.query.filter_by(recipe_id=plan_recipes[plan_recipe].recipe_id).first()
+	
+	
+	calories_used_in_breakfast = calculate_used_calories(breakfast_recipe, calories)
+	carbohydrates_used_in_breakfast = calculate_used_carbohydrates(breakfast_recipe, carbohydrates)
+	fat_used_in_breakfast = calculate_used_fat(breakfast_recipe, fat)
+	protein_used_in_breakfast = calculate_used_protein(breakfast_recipe, protein)
+
+	calories_used_in_lunch = calculate_used_calories(lunch_recipe, calories)
+	carbohydrates_used_in_lunch = calculate_used_carbohydrates(lunch_recipe, carbohydrates)
+	fat_used_in_lunch = calculate_used_fat(lunch_recipe, fat)
+	protein_used_in_lunch = calculate_used_protein(lunch_recipe, protein)
+
+	dinner_limit_calories = calories - calories_used_in_breakfast - calories_used_in_lunch
+	dinner_limit_carbohydrates = carbohydrates - carbohydrates_used_in_breakfast - carbohydrates_used_in_lunch
+	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
+	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
+
+	dinner = "soup"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
@@ -423,11 +632,11 @@ def add_dinner_to_db():
 	recipe_url = request.form.get("recipe_url")
 	recipe_image = request.form.get("recipe_image")
 	directions = request.form.get("directions")
-	servings = request.form.get("servings")
-	calories = request.form.get("calories")
-	carbohydrates = request.form.get("carbohydrates")
-	fat = request.form.get("fat")
-	protein = request.form.get("protein")
+	servings = float(request.form.get("servings"))
+	calories = float(request.form.get("calories"))
+	carbohydrates = float(request.form.get("carbohydrates"))
+	fat = float(request.form.get("fat"))
+	protein = float(request.form.get("protein"))
 	ingredients = request.form.get("ingredients")
 
 	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
@@ -440,6 +649,9 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 	payload = { 'q': meal,
 				'app_id': EDAMAM_RECIPE_SEARCH_APPLICATION_ID,
 				'app_key': EDAMAM_RECIPE_SEARCH_APPLICATION_KEY }
+
+	print(payload)
+	print("blablab1111111111111111111111111111111111111111")
 
 	response = requests.get(EDAMAM_URL, params=payload)
 	data = response.json()
@@ -522,6 +734,9 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 
 	return results
 
+
+
+
 def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients):
 	"""Helper function."""
 
@@ -575,6 +790,11 @@ def show_web_with_whole_plan():
 	plan_recipe_lst = PlanRecipe.query.filter_by(plan_id=plan.plan_id).all()
 
 	results = []
+	calories_sum = 0
+	carbohydrates_sum = 0
+	fat_sum = 0
+	protein_sum = 0
+
 
 	for plan_recipe_obj in plan_recipe_lst:
 		recipe = {}
@@ -583,13 +803,22 @@ def show_web_with_whole_plan():
 		recipe["recipe_image"] = recipe_obj.recipe_image
 		recipe["directions"] = recipe_obj.directions
 		recipe["servings"] = recipe_obj.servings
+		recipe["carbohydrates"] = recipe_obj.carbohydrates
+		recipe["fat"] = recipe_obj.fat
+		recipe["protein"] = recipe_obj.protein
 		recipe["calories_per_serving"] = recipe_obj.calories / recipe_obj.servings
+		
+		calories_sum += recipe["calories_per_serving"]
+		carbohydrates_sum += recipe["carbohydrates"] / recipe["servings"]
+		fat_sum += recipe["fat"] / recipe["servings"]
+		protein_sum += recipe["protein"] / recipe["servings"]
+
 		results.append(recipe)
 
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
-	return render_template("display_plan.html", results=results, user=user)
+	return render_template("display_plan.html", results=results, user=user, calories_sum=calories_sum, carbohydrates_sum=carbohydrates_sum, fat_sum=fat_sum, protein_sum=protein_sum)
 
 @app.route("/shopping-list")
 def get_shopping_list():
