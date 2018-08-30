@@ -20,30 +20,76 @@
       {{ flash }}
     {% endfor %}
 
+
   <nav class="navbar navbar-light bg-light">
     <form class="form-inline">
-
-      <button class="btn btn-sm btn-outline-secondary" id="logout" type="button">Log Out</button>
+      {% if session['user_id'] %}  
+        <button class="btn btn-sm btn-outline-secondary" type="button" id="logout">Log Out</button>
+      {% else %}
+        <button class="btn btn-outline-success" type="button" id="register">Register</button>
+        <button class="btn btn-outline-success" type="button" id="login">Log In</button>
+      {% endif %}
     </form>
   </nav>
+
+  {% if session['user_id'] %} 
+  <p>
+  <a class="btn btn-primary" data-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">
+    Plan number ...
+  </a>
+  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample1" aria-expanded="false" aria-controls="collapseExample">
+    Nutrition
+  </button>
+  </p>
+  <div class="collapse" id="collapseExample">
+    <div class="card card-body">
+      why only 1 p tag?
+    </div>
+  </div>
+  <div class="collapse" id="collapseExample1">
+    <div class="card card-body">
+      is this antoehr?
+    </div>
+  </div>
+  {% endif %}
+
 
     <div class="container">
       {% block content %}CONTENT HERE{% endblock %}
     </div>
 
+
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
   
-  </body>
+
+
   <script>
+
+    $(document).ready(function() {
+      $('#register').on('click', function() {
+        document.location = '/register';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#login').on('click', function() {
+        document.location = '/login';
+      });
+    });
+
     $(document).ready(function() {
       $('#logout').on('click', function() {
         document.location = '/logout';
       });
     });
 
+
+
   </script>
 
+
+  </body>
 
 </html>
