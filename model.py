@@ -204,9 +204,6 @@ class RecipeAllergy(db.Model):
     def __repr__(self):
         return f"""<ID={self.allergy_recipe_id}>"""
 
-
-
-
 def connect_to_db(app):
     """Connect the database to our Flask app."""
 
