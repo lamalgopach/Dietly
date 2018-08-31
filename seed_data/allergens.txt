@@ -3,3 +3,5 @@
 3 : Tree-Nuts
 4 : Shellfish
 5 : Soy 
+6 : Eggs
+7 : Milk
