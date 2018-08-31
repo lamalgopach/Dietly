@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+
+	{% block title %}Selection of {{ user }}'s breakfast{% endblock %}	
+		{% block content %}
+
+
+			{% for recipe in lst_of_recipes %}
+
+				<li>Recipe name: {{ recipe['recipe_name'] }} <br>
+				<img src="{{ recipe['recipe_image'] }}"> <br>
+				<a href="{{ recipe['directions'] }}">{{ recipe['recipe_name'] }}</a><br></li>
+
+			{% endfor %}
+
+			<h1>Whole plan nutrition facts:</h1>
+
+
+			<li>Calories: {{ nutritions['calories'] | round }} kcal <br>
+			Carbohydrates: {{ nutritions['carbohydrates'] | round }}g <br>
+			Fat: {{ nutritions['fat'] | round }}g <br>
+			Protein: {{ nutritions['protein'] | round }}g</li>
+
+
+
+
+		{% endblock %}  
