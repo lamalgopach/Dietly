@@ -321,8 +321,14 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 			if user_allergy in recipe_cautions:
 				has_allergy = True
 
+		
+
+		# recipe_labels = RecipeDiet
+
+
 		# has_diet_label = False
 		
+
 		# count = 0
 		# for user_diet in user_diets:
 		# 	if user_diet in recipe_labels:
@@ -523,7 +529,7 @@ def user_breakfast_preferences():
 	# breakfast = request.form.get("breakfast")
 	cal_or_perc = request.form.get("macro")
 
-	breakfast = "protein"
+	breakfast = "berries"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -620,7 +626,7 @@ def user_lunch_preferences():
 	lunch_limit_fat = fat * 0.65 - fat_used_in_breakfast
 	lunch_limit_protein = protein * 0.65 - protein_used_in_breakfast
 
-	lunch = "pasta"
+	lunch = "eggplant"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -742,7 +748,7 @@ def user_dinner_preferences():
 	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
 	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
 
-	dinner = "mozarella"
+	dinner = "milk"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
@@ -906,6 +912,14 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 
 	new_cautions_lst = json.loads(new_cautions)
 
+	new_diets = ""
+	for char in diets:
+		if char == "'":
+			new_diets += '"'
+		else:
+			new_diets += char
+
+	new_diets_lst = json.loads(new_diets)
 
 	if old_recipe is not None:
 		new_recipe_obj = old_recipe
@@ -913,14 +927,25 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 		new_recipe_obj = Recipe(recipe_name=recipe_name, recipe_url=recipe_url, recipe_image=recipe_image, directions=directions, servings=servings, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 		db.session.add(new_recipe_obj)
 		db.session.commit()
+
 		for caution in new_cautions_lst:
-			print(caution)
+
 
 			allergy = Allergy.query.filter_by(allergy_name=caution).first()
 
-
 			new_caution_recipe_obj = RecipeAllergy(recipe_id=new_recipe_obj.recipe_id, allergy_id=allergy.allergy_id)
 			db.session.add(new_caution_recipe_obj)
+
+		for diet in new_diets_lst:
+
+
+			diet = Diet.query.filter_by(diet_name=diet).first()
+
+			new_diet_recipe_obj = RecipeDiet(recipe_id=new_recipe_obj.recipe_id, diet_id=diet.diet_id)
+			db.session.add(new_diet_recipe_obj)
+
+
+
 
 
 	db.session.commit()
