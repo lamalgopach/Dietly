@@ -323,21 +323,22 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 
 		
 
-		# recipe_labels = RecipeDiet
+		recipe_labels = RecipeDiet.query.filter_by(recipe_id=recipe1.recipe_id).all()
 
 
-		# has_diet_label = False
+		has_diet_label = True
 		
 
-		# count = 0
-		# for user_diet in user_diets:
-		# 	if user_diet in recipe_labels:
-		# 		count += 1
-		# if count == len(user_diets):
-		# 	has_diet_label = True
+		count = 0
+		for user_diet in user_diets:
+			if user_diet in recipe_labels:
+				count += 1
+			else:
+				has_diet_label = False
+		if count == len(user_diets):
+			has_diet_label = True
 
-		if has_allergy == False:
-		# and has_diet_label == True:
+		if has_allergy == False and has_diet_label == True:
 
 
 			for recipe2 in all_recipes_list:
@@ -529,7 +530,9 @@ def user_breakfast_preferences():
 	# breakfast = request.form.get("breakfast")
 	cal_or_perc = request.form.get("macro")
 
-	breakfast = "berries"
+
+
+	breakfast = "cottage"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -538,7 +541,7 @@ def user_breakfast_preferences():
 		#1 g fat is 9 kcal
 		protein = float(calories) * float(protein) / 400
 
-
+	print(carbohydrates)
 
 	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(new_plan)
@@ -930,7 +933,6 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 
 		for caution in new_cautions_lst:
 
-
 			allergy = Allergy.query.filter_by(allergy_name=caution).first()
 
 			new_caution_recipe_obj = RecipeAllergy(recipe_id=new_recipe_obj.recipe_id, allergy_id=allergy.allergy_id)
@@ -938,15 +940,10 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 
 		for diet in new_diets_lst:
 
-
 			diet = Diet.query.filter_by(diet_name=diet).first()
 
 			new_diet_recipe_obj = RecipeDiet(recipe_id=new_recipe_obj.recipe_id, diet_id=diet.diet_id)
 			db.session.add(new_diet_recipe_obj)
-
-
-
-
 
 	db.session.commit()
 
@@ -1135,5 +1132,3 @@ if __name__ == "__main__":
 	DebugToolbarExtension(app)
 	connect_to_db(app)
 	app.run(host='0.0.0.0', port=5000)
-
-	#658 the end
