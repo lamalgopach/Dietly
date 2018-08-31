@@ -212,9 +212,10 @@ def user_options():
 
 	return render_template("preferences.html", user=user)
 
+
 @app.route("/display-mealplan", methods=["POST"])
 def calculate_and_display_user_mealplans():
-	"""Calculate calories and macros and return list of user's mealplans."""
+	"""Get calories and macros, calculate in helper functions and return list of user's mealplans."""
 
 	user_id = session["user_id"]
 
@@ -225,6 +226,13 @@ def calculate_and_display_user_mealplans():
 	protein = float(request.form.get("protein"))
 	cal_or_perc = request.form.get("macro")
 
+	if cal_or_perc == "percentage":
+		carbohydrates = float(calories) * float(carbohydrates) / 400
+		#divide by 100 because 100% and div by 4 because 1 g carb is 4 calories
+		fat = float(calories) * float(fat) / 900
+		#1 g fat is 9 kcal
+		protein = float(calories) * float(protein) / 400
+
 
 	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(new_plan)
@@ -232,7 +240,46 @@ def calculate_and_display_user_mealplans():
 
 	results = calculate_calories_from_recipes_depend_on_plan(user_id)
 
-	return render_template("calculated_mealplan.html", results=results)
+	return render_template("calculated_mealplans.html", results=results)
+
+
+@app.route("/display-all-mealplans")
+def display_all_users_mealplans():
+	"""Display list of user's mealplans."""
+
+	user_id = session["user_id"]
+	plan_lst = display_all_user_plans(user_id)
+	
+	
+	return render_template("display_multiple_plans.html", plan_lst=plan_lst)
+
+
+def display_all_user_plans(user_id):
+	"""Get all user's plans and display them to the collapse buttons."""
+
+	list_of_users_plans = Plan.query.filter_by(user_id=user_id).all()
+
+	plans_lst = []
+
+	for plan in list_of_users_plans:
+
+		names_and_calories_of_plans = {}
+
+		names_and_calories_of_plans['name'] = plan.plan_name
+		names_and_calories_of_plans['plan_id'] = plan.plan_id
+		names_and_calories_of_plans['calories'] = plan.calories
+		names_and_calories_of_plans['carbohydrates'] = plan.carbohydrates
+		names_and_calories_of_plans['fat'] = plan.fat
+		names_and_calories_of_plans['protein'] = plan.protein
+
+		plans_lst.append(names_and_calories_of_plans)
+
+	return plans_lst
+
+
+
+
+
 
 def calculate_calories_from_recipes_depend_on_plan(user_id):
 	"""Get all the recipes from db, get number of calories, check which recipes which could create mealplan."""
@@ -389,9 +436,77 @@ def get_user_pick_and_add_mealplan_to_db():
 	db.session.commit()
 
 
-	return render_template("homepage.html")
+	return redirect('/display-all-mealplans')
 
 
+
+@app.route("/plans/<int:plan_id>")
+def show_info_about_plan(plan_id):
+	"""Info from link, show the chosen plan."""
+
+	lst_of_recipes = get_all_recipes_for_plan_id(plan_id)
+	nutritions = display_nutrition_facts_for_plan(plan_id)
+
+
+	return render_template("plan.html", lst_of_recipes=lst_of_recipes, nutritions=nutritions)
+
+
+def get_all_recipes_for_plan_id(plan_id):
+	"""Get all recipes for user's plan"""
+
+	connection_lst = PlanRecipe.query.filter_by(plan_id=plan_id).all()
+
+
+	lst_of_recipes = []
+	recipe_lst_obj = []
+	
+	for connection in connection_lst:
+		recipe_lst_obj = Recipe.query.filter_by(recipe_id=connection.recipe_id).all()
+
+		for recipe_obj in recipe_lst_obj:
+			recipe = {}
+			recipe['recipe_name'] = recipe_obj.recipe_name
+			recipe['recipe_image'] = recipe_obj.recipe_image
+			recipe['directions'] = recipe_obj.directions
+
+			lst_of_recipes.append(recipe)
+
+	return lst_of_recipes
+
+
+def display_nutrition_facts_for_plan(plan_id):
+	"""Get user's and display nutrition facts."""
+
+	nutritions = {}
+
+	calories = 0
+	carbohydrates = 0
+	fat = 0
+	protein = 0
+
+	connection_lst = PlanRecipe.query.filter_by(plan_id=plan_id).all()
+
+	recipe_lst_obj = []
+
+
+	for connection in connection_lst:
+		recipe_obj = Recipe.query.filter_by(recipe_id=connection.recipe_id).first()
+		recipe_lst_obj.append(recipe_obj)
+
+
+	for recipe_obj in recipe_lst_obj:
+		
+		calories += recipe_obj.calories / recipe_obj.servings
+		carbohydrates += recipe_obj.carbohydrates / recipe_obj.servings
+		fat += recipe_obj.fat / recipe_obj.servings
+		protein += recipe_obj.protein / recipe_obj.servings
+
+		nutritions['calories'] = calories
+		nutritions['carbohydrates'] = carbohydrates
+		nutritions['fat'] = fat
+		nutritions['protein'] = protein
+
+	return(nutritions)
 
 
 @app.route("/display-breakfast", methods=["POST"])
@@ -571,8 +686,10 @@ def add_lunch_to_db():
 	fat = float(request.form.get("fat"))
 	protein = float(request.form.get("protein"))
 	ingredients = request.form.get("ingredients")
+	cautions = request.form.get("cautions")
+	diets = request.form.get("diets")
 
-	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients, cautions, diets)
 
 	return redirect ("/display-dinner")
 
@@ -625,7 +742,7 @@ def user_dinner_preferences():
 	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
 	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
 
-	dinner = "margherita"
+	dinner = "mozarella"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
@@ -674,8 +791,10 @@ def add_dinner_to_db():
 	fat = float(request.form.get("fat"))
 	protein = float(request.form.get("protein"))
 	ingredients = request.form.get("ingredients")
+	cautions = request.form.get("cautions")
+	diets = request.form.get("diets")
 
-	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients)
+	add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, servings, calories, carbohydrates, fat, protein, ingredients, cautions, diets)
 
 	return redirect("/display-plan")
 
@@ -787,12 +906,6 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 
 	new_cautions_lst = json.loads(new_cautions)
 
-	print(new_cautions_lst)
-	print(type(new_cautions_lst))
-	print("gosiaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-
-
-
 
 	if old_recipe is not None:
 		new_recipe_obj = old_recipe
@@ -805,12 +918,9 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 
 			allergy = Allergy.query.filter_by(allergy_name=caution).first()
 
-			print("blaaaaaaaaaaaaaaaaaaaaaaaaa")
-			print(allergy)
+
 			new_caution_recipe_obj = RecipeAllergy(recipe_id=new_recipe_obj.recipe_id, allergy_id=allergy.allergy_id)
 			db.session.add(new_caution_recipe_obj)
-
-
 
 
 	db.session.commit()
@@ -847,10 +957,6 @@ def add_meal_to_db(user_id, recipe_name, recipe_url, recipe_image, directions, s
 			db.session.commit()
 
 
-
-
-
-
 @app.route("/display-plan")
 def show_web_with_whole_plan():
 	"""Display the whole plan for a day."""
@@ -884,9 +990,10 @@ def show_web_with_whole_plan():
 		fat_sum += recipe["fat"] / recipe["servings"]
 		protein_sum += recipe["protein"] / recipe["servings"]
 
+		print(type(recipe["calories_per_serving"]))
+
 		results.append(recipe)
 
-	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
 	return render_template("display_plan.html", results=results, user=user, calories_sum=calories_sum, carbohydrates_sum=carbohydrates_sum, fat_sum=fat_sum, protein_sum=protein_sum)
@@ -927,7 +1034,7 @@ def get_shopping_list():
 	return render_template("display_shopping_list.html", results=ingredient_dictionary)
 
 @app.route("/make-a-meal-from-fridge")
-def show_ing_form():
+def show_ingredients_form():
 	"""Display checkbox with ingredients options."""
 
 	return render_template("make_a_meal.html")
