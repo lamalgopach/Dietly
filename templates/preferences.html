@@ -12,7 +12,7 @@
 		<input type="text" name="plan_name" required><br><br>
 
 		<h2>How many calories do you want to eat per day?</h2>
-		<input type="number" name="calories" min=1400 max=4000 required><br><br>
+		<input type="number" name="calories"  max=4000 required><br><br>
 
 
 
@@ -23,13 +23,13 @@
 			</span>
 				<div>
 				<h3>How many percent of this would you like to spend on carbohydrates?</h3>
-				<input id="carbs" type="number" name="carbohydrates" min=0  required><br><br>
+				<input id="carbs" type="number" name="carbohydrates" value=0 min=0 max=200 required><br><br>
 
 				<h3>What about fat?</h3>
-				<input id="fat" type="number" name="fat" value=0 min=0 required><br><br>
+				<input id="fat" type="number" name="fat" value=0 min=0 max=200 required><br><br>
 
 				<h3>And protein?</h3>
-				<input id="protein" type="number" name="protein" value=0 min=0 required><br><br>
+				<input id="protein" type="number" name="protein" value=0 min=0 max=200 required><br><br>
 				</div>
 			
 		<h4>The recomendation of the Institute of Medicine:</h4>
@@ -37,7 +37,7 @@
 		<h4>10-35% of daily calories from protein (1 gram of protein is 4 calories)</h4><br>
 		<h4>20-35% of daily calories from fat (fat provides 9 calories per gram)</h4><br><br>
 
-		<h6>Do you want your breakfast with...</h6>
+<!-- 		<h6>Do you want your breakfast with...</h6>
 
   		<input type="radio" name="breakfast" value="sausages" required> sausage<br>
 		<input type="radio" name="breakfast" value="pancakes"> pancake<br>
@@ -47,10 +47,25 @@
 		<input type="radio" name="breakfast" value="avocado"> anything with avocado!<br>
 		<input type="radio" name="breakfast" value="egg"> any type of eggs<br>
 		<input type="radio" name="breakfast" value="scrambled,eggs"> scrambled eggs<br>
-		<input type="radio" name="breakfast" value="breakfast"> I don't have any preferences<br><br>
+		<input type="radio" name="breakfast" value="breakfast"> I don't have any preferences<br><br> -->
 
 		<input type="button" id="breakfast" value="Show me just a breakfast!">
 		<input type="submit" id="mealplan" value="Show me whole mealplan!">
+
+
+<br>
+------------------------------------------
+		<h6>Your mealplans:</h6>
+      	
+      	{% for plan in plan_lst %}
+
+			<li>Plan name: <a href="http://0.0.0.0:5000/plans/{{ plan['plan_id'] }}">{{ plan['name'] }}</a> <br>
+			Calories: {{ plan['calories'] }} kcal<br>
+			Carbohydrates: {{ plan['carbohydrates'] }}g<br>
+			Fat: {{ plan['fat'] }}g<br>
+			Protein: {{ plan['protein'] }}g</li>
+
+		 {% endfor %}
 
 		<script >
 
@@ -125,9 +140,9 @@
 
 	    		}
 		  		else if ($(".macros input:checked").val() === "grams"){
-			        $("#carbs").attr("max", 200);
-			        $("#fat").attr("max", 100);
-			        $("#protein").attr("max", 100);
+			        $("#carbs").attr("max", 300);
+			        $("#fat").attr("max", 300);
+			        $("#protein").attr("max", 300);
 	    		}	
 
 	    	});
