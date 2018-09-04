@@ -87,6 +87,12 @@ def handle_allergy_form():
 	soy = request.form.get("allergen5")
 	allergens.append(soy)
 
+	eggs = request.form.get("allergen6")
+	allergens.append(eggs)
+
+	milk = request.form.get("allergen7")
+	allergens.append(milk)
+
 	user_id = session["new_user_id"]
 
 	for i, allergen in enumerate(allergens):
@@ -199,7 +205,9 @@ def user_options():
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
-	return render_template("preferences.html", user=user)
+	plan_lst = display_all_user_plans(user_id)
+
+	return render_template("preferences.html", user=user, plan_lst=plan_lst)
 
 
 @app.route("/display-mealplan", methods=["POST"])
@@ -237,10 +245,10 @@ def display_all_users_mealplans():
 	"""Display list of user's mealplans."""
 
 	user_id = session["user_id"]
-	plan_lst = display_all_user_plans(user_id)
+
 	
 	
-	return render_template("display_multiple_plans.html", plan_lst=plan_lst)
+	return render_template("display_multiple_plans.html")
 
 
 def display_all_user_plans(user_id):
@@ -306,9 +314,16 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 
 		recipe_cautions = RecipeAllergy.query.filter_by(recipe_id=recipe1.recipe_id).all()
 
+		allergies = []
+		for caution in recipe_cautions:
+			allergy = Allergy.query.filter_by(allergy_id=caution.allergy_id).first()
+			allergies.append(allergy)
+
+
+
 		has_allergy = False
 		for user_allergy in user_allergies:
-			if user_allergy in recipe_cautions:
+			if user_allergy in allergies:
 				has_allergy = True
 
 		
@@ -373,24 +388,29 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 										set_recipe.add(recipe3)
 
 
+										has_allergy = False
+										has_diet_label = True
 
 
 										recipe_cautions = RecipeAllergy.query.filter_by(recipe_id=recipe2.recipe_id).all()
 										recipe_cautions.extend(RecipeAllergy.query.filter_by(recipe_id=recipe3.recipe_id).all())
 
-										has_allergy = False
-										has_diet_label = True
 
+
+										allergies = []
+										for caution in recipe_cautions:
+											allergy = Allergy.query.filter_by(allergy_id=caution.allergy_id).first()
+											allergies.append(allergy)
 
 										for user_allergy in user_allergies:
-											if user_allergy in recipe_cautions:
+											if user_allergy in allergies:
 												has_allergy = True
-										
 
 
-										
+									
 
-										recipe_labels = RecipeDiet.query.filter_by(recipe_id=recipe1.recipe_id).all()
+										recipe_labels = RecipeDiet.query.filter_by(recipe_id=recipe2.recipe_id).all()
+										recipe_labels.extend(RecipeDiet.query.filter_by(recipe_id=recipe3.recipe_id).all())
 
 										labels = []
 										for diet in recipe_labels:
@@ -402,8 +422,6 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 											if user_diet not in recipe_labels:
 												has_diet_label = False
 
-										print(has_allergy, has_diet_label)
-										print("blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
 
 										if has_allergy == False and has_diet_label == True:
 											if set_recipe not in list_of_recipes:
@@ -549,7 +567,7 @@ def user_breakfast_preferences():
 	cal_or_perc = request.form.get("macro")
 
 
-	breakfast = "breakfast"
+	breakfast = "pancake,cereal,milk"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
