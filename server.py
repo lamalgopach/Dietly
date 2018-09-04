@@ -26,17 +26,6 @@ EDAMAM_URL = "https://api.edamam.com/search"
 def homepage():
 	"""Show homepage"""
 
-	#if logged in - flash message: Succesfully logged in
-	#show options in form(nav menu):
-		# go to preferences 
-		# go to make a meal from your fridge
-
-	#if NOT logged in - flash message: You are not logged in
-	# if "user_id" in session:
-	# 	print(session)
-		# show logout button
-
-
 	return render_template("homepage.html")
 
 @app.route("/register")
@@ -49,10 +38,10 @@ def register():
 def register_form():
 	"""Register user if not in the database"""
 
-	fname=request.form.get("fname")
-	lname=request.form.get("lname")
-	email=request.form.get("email")
-	password=request.form.get("password")
+	fname = request.form.get("fname")
+	lname = request.form.get("lname")
+	email = request.form.get("email")
+	password = request.form.get("password")
 
 	new_user = User(fname=fname, lname=lname, email=email, password=password)
 	user = User.query.filter_by(fname=fname, lname=lname, email=email, password=password).first()
@@ -314,6 +303,7 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 		fat_per_yield1 = fat1 / serv1
 		protein_per_yield1 = protein1 / serv1
 
+
 		recipe_cautions = RecipeAllergy.query.filter_by(recipe_id=recipe1.recipe_id).all()
 
 		has_allergy = False
@@ -325,18 +315,18 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 
 		recipe_labels = RecipeDiet.query.filter_by(recipe_id=recipe1.recipe_id).all()
 
-
 		has_diet_label = True
-		
 
-		count = 0
+		labels = []
+		for diet in recipe_labels:
+			label = Diet.query.filter_by(diet_id=diet.diet_id).first()
+			labels.append(label.diet_name)
+	
+
 		for user_diet in user_diets:
-			if user_diet in recipe_labels:
-				count += 1
-			else:
+			if user_diet not in recipe_labels:
 				has_diet_label = False
-		if count == len(user_diets):
-			has_diet_label = True
+
 
 		if has_allergy == False and has_diet_label == True:
 
@@ -355,39 +345,67 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 				protein_per_yield2 = protein2 / serv2
 
 
+				for recipe3 in all_recipes_list:
+
+					serv3 = recipe3.servings
+					kcal3 = recipe3.calories
+					carbs3 = recipe3.carbohydrates
+					fat3 = recipe3.fat
+					protein3 = recipe3.protein
 
 
-				# for rec_lab_1 in recipe_labels_1:
-				# 	recipe_labels.append(rec_lab_1)
-
-
-				if kcal_per_yield1 + kcal_per_yield2 < plan_calories and carbohydrates_per_yield1 + carbohydrates_per_yield2 < plan_carbohydrates and fat_per_yield1 + fat_per_yield2 < plan_fat and protein_per_yield1 + protein_per_yield2 < plan_protein:
-
-					for recipe3 in all_recipes_list:
-
-						serv3 = recipe3.servings
-						kcal3 = recipe3.calories
-						carbs3 = recipe3.carbohydrates
-						fat3 = recipe3.fat
-						protein3 = recipe3.protein
+					kcal_per_yield3 = kcal3 / serv3
+					carbohydrates_per_yield3 = carbs3 / serv3
+					fat_per_yield3 = fat3 / serv3
+					protein_per_yield3 = protein3 / serv3
 
 
 
-						kcal_per_yield3 = kcal3 / serv3
-						carbohydrates_per_yield3 = carbs3 / serv3
-						fat_per_yield3 = fat3 / serv3
-						protein_per_yield3 = protein3 / serv3
+					if kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 <= plan_calories + 50 and kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 >= plan_calories - 50:
 
-						if kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 <= plan_calories + 100 and kcal_per_yield1 + kcal_per_yield2 + kcal_per_yield3 >= plan_calories - 100:
+						if carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 <= plan_carbohydrates + 20 and carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 >= plan_carbohydrates - 20:
+							if fat_per_yield1 + fat_per_yield2 + fat_per_yield3 <= plan_fat + 20 and fat_per_yield1 + fat_per_yield2 + fat_per_yield3 >= plan_fat - 20: 
+								if protein_per_yield1 + protein_per_yield2 + protein_per_yield3 <= plan_protein + 20 and protein_per_yield1 + protein_per_yield2 + protein_per_yield3 >= plan_protein - 20:
+									if recipe1 != recipe2 and recipe2 != recipe3 and recipe3 != recipe1:
+										set_recipe = set()
+										set_recipe.add(recipe1)
+										set_recipe.add(recipe2)
+										set_recipe.add(recipe3)
 
-							if carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 <= plan_carbohydrates + 20 and carbohydrates_per_yield1 + carbohydrates_per_yield2 + carbohydrates_per_yield3 >= plan_carbohydrates - 20:
-								if fat_per_yield1 + fat_per_yield2 + fat_per_yield3 <= plan_fat + 20 and fat_per_yield1 + fat_per_yield2 + fat_per_yield3 >= plan_fat - 20: 
-									if protein_per_yield1 + protein_per_yield2 + protein_per_yield3 <= plan_protein + 20 and protein_per_yield1 + protein_per_yield2 + protein_per_yield3 >= plan_protein - 20:
-										if recipe1 != recipe2 and recipe2 != recipe3 and recipe3 != recipe1:
-											set_recipe = set()
-											set_recipe.add(recipe1)
-											set_recipe.add(recipe2)
-											set_recipe.add(recipe3)
+
+
+
+										recipe_cautions = RecipeAllergy.query.filter_by(recipe_id=recipe2.recipe_id).all()
+										recipe_cautions.extend(RecipeAllergy.query.filter_by(recipe_id=recipe3.recipe_id).all())
+
+										has_allergy = False
+										has_diet_label = True
+
+
+										for user_allergy in user_allergies:
+											if user_allergy in recipe_cautions:
+												has_allergy = True
+										
+
+
+										
+
+										recipe_labels = RecipeDiet.query.filter_by(recipe_id=recipe1.recipe_id).all()
+
+										labels = []
+										for diet in recipe_labels:
+											label = Diet.query.filter_by(diet_id=diet.diet_id).first()
+											labels.append(label.diet_name)
+									
+
+										for user_diet in user_diets:
+											if user_diet not in recipe_labels:
+												has_diet_label = False
+
+										print(has_allergy, has_diet_label)
+										print("blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+
+										if has_allergy == False and has_diet_label == True:
 											if set_recipe not in list_of_recipes:
 												list_of_recipes.append(set_recipe)
 
@@ -531,8 +549,7 @@ def user_breakfast_preferences():
 	cal_or_perc = request.form.get("macro")
 
 
-
-	breakfast = "cottage"
+	breakfast = "breakfast"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -563,7 +580,8 @@ def user_breakfast_preferences():
 	breakfast_limit_protein = protein * 0.35 
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
-
+	print("blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
+	print(results)
 
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
@@ -852,14 +870,11 @@ def get_recipes_from_api(meal, meal_limit_calories, meal_limit_carbohydrates, me
 				if user_allergy in recipe_cautions:
 					has_allergy = True
 
-			has_diet_label = False
+			has_diet_label = True
 
-			count = 0
 			for user_diet in user_diets:
-				if user_diet in recipe_labels:
-					count += 1
-			if count == len(user_diets):
-				has_diet_label = True
+				if user_diet not in recipe_labels:
+					has_diet_label = False
 
 			if has_allergy == False and has_diet_label == True:
 				recipe_name = data["hits"][n]["recipe"]["label"]
