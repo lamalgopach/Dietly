@@ -1,0 +1,15 @@
+body .homepage {
+  background: url("pexels-photo-459469.jpeg") no-repeat center center;
+  background-size: cover;
+  line-height: 50;
+  width: 100%;
+
+}
+
+.login_form {
+
+	width: 10%;
+	height: 10%;
+	box-sizing: border-box;
+}
+
