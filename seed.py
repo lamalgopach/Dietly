@@ -16,7 +16,7 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPL
 EDAMAM_URL = "https://api.edamam.com/search"
 
 
-def get_recipe_attributes_db(name):
+def get_recipe_attributes_db(name, p):
 	"""Get the recipes' attributes."""
 
 
@@ -29,7 +29,7 @@ def get_recipe_attributes_db(name):
 
 
 	if response.ok:
-		for n in range(5):
+		for n in range(p):
 			recipe_obj = Recipe(recipe_name=data["hits"][n]["recipe"]["label"],
 								recipe_url=data["hits"][n]["recipe"]["uri"],
 								recipe_image=data["hits"][n]["recipe"]["image"],
@@ -275,20 +275,22 @@ if __name__ == "__main__":
     load_allergens(allergy_filename)
     load_diets(diet_filename)
 
-    meal_list = ["fish", "zucchini", "crepes", "dinner", "broccoli", "pancakes", "pork", "kebab", "taco", "tacos", "steak", "schnitzel", "gulash", "hungarian", "dumplings", "pasta"]
+    meal_list = ["breakfast", "pancake", "eggs", "chicken", "asparagus", "banana", "artichoke", "pizza", "zucchini", "broccoli",  "avocado", "kebab", "steak", "schnitzel", "lunch", "beef", "poke", "muesli", "garlic"]
  
     
 
-# "breakfast", "pancake", "eggs", "chicken", "beef", "avocado", "banana", "muesli", "lunch", "poke", "garlic", "pizza", - ok
 
 
-# bad names: pork, protein, oatmeal "scrambled", "chinese", "apple", "smoothie", "omelette", "bruschetta", "sausage(s)", "soup", "panini",
-# "ramen",   "spaghetti", "salad", "hamburger", "pierogies",  "mozarella", 
+# bad names: pork(0), "chinese"(1), "apple"(3), "smoothie"(1), "omelette"(3), "bruschetta"(1), "sausage(s)", "soup", "panini",
+# "ramen",   "spaghetti", "salad", "hamburger", "pierogies",  "mozarella", "fish", "crepes", "pancakes", "dinner", "tacos"(1),"gulash"(2),
+# "hungarian"(2), "taco"(2), "dumplings"(1), "pasta"(1), "protein" (1), "oatmeal"(2), "scrambled"(1), 
 
     for i in meal_list:
 
-    	get_recipe_attributes_db(i)
-    	time.sleep(90.0)
+    	get_recipe_attributes_db(i, 5)
+    	time.sleep(61.0)
+
+
 
 
 
