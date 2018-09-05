@@ -4,13 +4,40 @@
 
 {% block content %}
 
-<h1> Your shopping list: </h1>
+<div class="header"> <h1> Your shopping list: </h1></div>
+<br><br><br><br>
+<div class="row">
+{% for recipe_name in recipes_names %}
+	<div class="col-sm recipe-name-bolded">
 
-{% for key, value in results.items() %}
 
-	<li>{{ key }} ({{ value|round }}g)</li>
+		{{ recipe_name }} <br>
 
+
+		</div>
 {% endfor %}
+</div>
+
+<br><br>
+
+
+
+<div class="row">
+{% for result in results %}
+	<div class="col-sm result">
+	{% for r in result %}
+
+		{{ r }} <br>
+
+	{% endfor %}
+		</div>
+{% endfor %}
+</div>
+<!-- % for key, value in results.items() %} -->
+
+	<!-- li> key }} ({{ value}}g)</li> -->
+
+<!-- % endfor %} -->
 
 
 {% endblock %}	

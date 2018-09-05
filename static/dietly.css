@@ -37,8 +37,8 @@ body {
 }
 
 .plan-header {
-font-weight: ;
-font-size: 1.5em ;
+    font-weight: ;
+    font-size: 1.5em ;
 
 }
 
@@ -46,4 +46,28 @@ font-size: 1.5em ;
     text-align: center;
 
 
+}
+
+.plans-recipes {
+
+    column-count: 3;
+
+}
+
+.recipe-name-bolded {
+
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.3em
+
+}
+
+.header {
+
+    text-align: center;
+}
+
+.result {
+
+    font-size: 1.2em
 }

@@ -246,9 +246,9 @@ def display_all_users_mealplans():
 
 	user_id = session["user_id"]
 
+	plan_lst = display_all_user_plans(user_id)
 	
-	
-	return render_template("display_multiple_plans.html")
+	return render_template("display_multiple_plans.html", plan_lst=plan_lst)
 
 
 def display_all_user_plans(user_id):
@@ -272,10 +272,6 @@ def display_all_user_plans(user_id):
 		plans_lst.append(names_and_calories_of_plans)
 
 	return plans_lst
-
-
-
-
 
 
 def calculate_calories_from_recipes_depend_on_plan(user_id):
@@ -576,7 +572,7 @@ def user_breakfast_preferences():
 		#1 g fat is 9 kcal
 		protein = float(calories) * float(protein) / 400
 
-	print(carbohydrates)
+
 
 	new_plan = Plan(plan_name=plan_name, user_id=user_id, calories=calories, carbohydrates=carbohydrates, fat=fat, protein=protein)
 	db.session.add(new_plan)
@@ -598,9 +594,6 @@ def user_breakfast_preferences():
 	breakfast_limit_protein = protein * 0.35 
 
 	results = get_recipes_from_api(breakfast, breakfast_limit_calories, breakfast_limit_carbohydrates, breakfast_limit_fat, breakfast_limit_protein, user_allergies, user_diets)
-	print("blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
-	print(results)
-
 	user_id = session["user_id"]
 	user = User.query.filter_by(user_id=user_id).first().fname
 
@@ -1067,26 +1060,49 @@ def get_shopping_list():
 		recipe_obj = Recipe.query.filter_by(recipe_id=plan_recipe_obj.recipe_id).first()
 		recipes_ids.append(recipe_obj.recipe_id)
 
-	ingredient_ids = []
+	# ingredient_ids = []
+	recipes_ing_lst = []
+	recipes_names = []
 	for recipe_id in recipes_ids:
 		recipe_ing_lst = RecipeIngredient.query.filter_by(recipe_id=recipe_id).all()
 		recipe_name = Recipe.query.filter_by(recipe_id=recipe_id).first().recipe_name
-
+		ingredient_lst = []
+		recipes_names.append(recipe_name)
+		
 		for recipe_ing in recipe_ing_lst:
 			#recipe_ing - object
-			ingredient_ids.append(recipe_ing.ingredient_id)
+			# ingredient_ids.append(recipe_ing.ingredient_id)
 
-	ingredient_dictionary = {}
-	for ing in ingredient_ids:
-		ingredient = Ingredient.query.filter_by(ingredient_id=ing).one()
-		recipe_ing_obj = RecipeIngredient.query.filter_by(ingredient_id=ingredient.ingredient_id).first()
+			ingredient = Ingredient.query.filter_by(ingredient_id=recipe_ing.ingredient_id).first()
+
+			ingredient_lst.append(ingredient.ingredient_name)
+		recipes_ing_lst.append(ingredient_lst)
+
+
+
+
+
+
+
+
+
+
+	# ingredient_dictionary = {}
+	# for ing in ingredient_ids:
+	# 	ingredient = Ingredient.query.filter_by(ingredient_id=ing).one()
+	# 	recipe_ing_obj = RecipeIngredient.query.filter_by(ingredient_id=ingredient.ingredient_id).first()
 		
-		if ingredient.ingredient_name not in ingredient_dictionary:
-			ingredient_dictionary[ingredient.ingredient_name] = recipe_ing_obj.amount
-		else:
-			ingredient_dictionary[ingredient.ingredient_name] += recipe_ing_obj.amount
 
-	return render_template("display_shopping_list.html", results=ingredient_dictionary)
+	
+		# if ingredient.ingredient_name not in ingredient_dictionary:
+		# 	ingredient_dictionary[ingredient.ingredient_name] = recipe_ing_obj.amount
+		# else:
+		# 	ingredient_dictionary[ingredient.ingredient_name] += recipe_ing_obj.amount
+
+	print("nlaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00")
+	print(recipes_ing_lst)
+
+	return render_template("display_shopping_list.html", results=recipes_ing_lst, recipes_names=recipes_names)
 
 @app.route("/make-a-meal-from-fridge")
 def show_ingredients_form():
