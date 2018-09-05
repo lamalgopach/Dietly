@@ -24,7 +24,7 @@ body {
 
     margin: auto;
     width: 50%;
-    border: 3px solid green;
+
     padding: 10px;
 }
 
@@ -39,5 +39,11 @@ body {
 .plan-header {
 font-weight: ;
 font-size: 1.5em ;
+
+}
+
+.rec-image {
+    text-align: center;
+
 
 }
