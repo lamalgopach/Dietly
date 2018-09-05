@@ -51,17 +51,20 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">Hidden brand</a>
+      <a class="navbar-brand" >Dietly</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-        </li>
+       <!--  <li class="nav-item active">
+          <a class="nav-link" href="http://0.0.0.0:5000">Home <span class="sr-only">(current)</span></a>
+        </li> -->
+        {% if session['user_id'] %} 
         <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
+          <a class="nav-link" href="http://0.0.0.0:5000/preferences">Preferences</a>
         </li>
+
         <li class="nav-item">
-          <a class="nav-link disabled" href="#">Disabled</a>
+          <a class="nav-link disabled" href="http://0.0.0.0:5000/login">Calculate your mealplan!</a>
         </li>
+        {% endif %}
       </ul>
 
 
