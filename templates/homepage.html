@@ -1,63 +1,151 @@
-{% extends 'base.html' %}
+<!doctype html>
+<html>
 
-{% block title %}Homepage{% endblock %}
+  <head>
+    <title>Homepage</title>
 
-{% block content %}
-
-<!--   <nav class="navbar navbar-light bg-light">
-    <form class="form-inline" id="nav">
-      <button class="btn btn-outline-success" type="button" id="make-a-meal-from-fridge">Make a meal from your fridge!</button>
-    </form>
-  </nav> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
 
-  <div class="row">
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  	Homepage.
-  	Welcome. 
+  <style>
+  @import url('https://fonts.googleapis.com/css?family=Lato');
+  </style>
+
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+
+    <link href="https://fonts.googleapis.com/css?family=M+PLUS+Rounded+1c:400,500" rel="stylesheet">
+
+      <style>
+      body
+      {
+        background: url("/static/pexels-photo-459469.jpeg") no-repeat center center;
+        background-size: cover;
+        height: 20;
+
+      }
+
+      .btn-outline-success {
+        background-color: #2D7DD2;
+        color: white;
+
+      }
+
+      p {
+
+        color: white;
+        text-align: left;
+      }
+
+
+
+    </style>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="#">Hidden brand</a>
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+
+
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="fridge">Make a meal from your fridge</button>
+      </form>
+
+      {% if not session['user_id'] %} 
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="register">Register</button>
+      </form>
+
+       
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="login">Log In</button>
+      </form>
+      {% else %}
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="logout">Log Out</button>
+      </form>
+
+      {% endif %}
+
+
+
+
+    </div>
+  </nav>
+
+
+
+  
+  </head>
+
+  <body>
+
+
+
+
+
 <!-- 
-    Type some text what your page do. <br><br>
+    <div class="container">
 
-    <h2>Do you struggle with new ideas for your meal?</h2><br><br>
-
-    <h3>Do you want to build your shape and need to be super strict to your macros and calories but bored about rutine recipes?</h3> <br><br>
-
-    <h3>Are you allergic? Need some assistance with choosing special type of diet?</h3> <br><br>
-
-    <h4>Have a full fridge and no idea what to do for a special dinner?</h4> <br><br>
-    <h5>Have almost empty fridge?</h5> <br><br>
-    Tell me what is in your fridge!
-
-    <h1>This site is for you!<h1> <br><br>
-    <h1> This app will help you to build your mealplan!</h1> <br><br> -->
-
-  </div> 
-  	<br>
+  <p> <br><br> <br><br> <br><br> <br><br><br><br> <br><br>   Dietly </p>
+    </div> -->
 
 
-  	<!-- <!- in css: jquery click set css visible block tutorial hide show jquery--> -->
-<!-- modal window jquery and bootstrap-->
-<!--  -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
 
 
-<!-- 	<a href="http://0.0.0.0:5000/register">Sign in</a><br><br>
-	<a href="http://0.0.0.0:5000/login">Sign up</a><br><br>
-	<a href="http://0.0.0.0:5000/make-a-meal-from-fridge">Make a meal from your fridge!</a> -->
+  <script>
 
-
- <!--    <script >
-
- 
     $(document).ready(function() {
-      $('#make-a-meal-from-fridge').on('click', function() {
+      $('#register').on('click', function() {
+        document.location = '/register';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#login').on('click', function() {
+        document.location = '/login';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#logout').on('click', function() {
+        document.location = '/logout';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#fridge').on('click', function() {
         document.location = '/make-a-meal-from-fridge';
       });
     });
 
 
-    </script> -->
+
+  </script>
 
 
+  </body>
 
-
-{% endblock %}
+</html>

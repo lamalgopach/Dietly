@@ -1,14 +1,112 @@
-{% extends 'base.html' %}
+<!doctype html>
+<html>
 
-{% block title %}Make a meal from your fridge{% endblock %}
+  <head>
+    <title>{% block title %}Meal{% endblock %}</title>
 
-{% block content %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/dietly.css">
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+  <style>
+  @import url('https://fonts.googleapis.com/css?family=Lato');
+  </style>
+
+
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+
+    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
+
+      
+
+
+
+    {% for flash in get_flashed_messages() %}
+      {{ flash }}
+    {% endfor %}
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+      <a class="navbar-brand" href="#">Hidden brand</a>
+      <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Link</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled" href="#">Disabled</a>
+        </li>
+      </ul>
+
+
+     {% if not session['user_id'] %} 
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="register">Register</button>
+      </form>
+
+       
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="login">Log In</button>
+      </form>
+      {% else %}
+      <form class="form-inline my-2 my-lg-0">
+        <button class="btn btn-outline-success my-2 my-sm-0" type="button" id="logout">Log Out</button>
+      </form>
+
+      {% endif %}
+
+
+
+
+    </div>
+  </nav>
+<style>
+div {
+    column-count: 3;
+}
+</style>
+
+
+
+
+
+  </head>
+
+  <body>
+
+
+
+
+    <div class="container">
+
 
 <form action="/make-a-meal-from-fridge" method="POST">
 	<br>
 	Tell me what is in your fridge
 	<br>
 	<br>
+
+<!-- <div class="row">
+  <div class="column"></div>
+  <h1> sdjfhgashdg</h1>
+  <div class="column">
+    <h1>sdjfhgashdg</h1>
+
+    </div>
+</div>
+ -->
+
+
+
+
 	<input type="checkbox", name="option1", value="chicken"> Chicken <br>
 	<input type="checkbox", name="option2", value="tomato"> Tomato <br>
 	<input type="checkbox", name="option3", value="avocado"> Avocado <br>
@@ -19,10 +117,64 @@
 	<input type="checkbox", name="option8", value="pepper"> Pepper <br>
 	<input type="checkbox", name="option9", value="parsley"> Parsley <br>
 	<input type="checkbox", name="option10", value="potato"> Potato <br>
+	<input type="checkbox", name="option11", value="eggs"> Eggs <br><br><br><br><br><br><br>
+	<input type="checkbox", name="option12", value="cucumber"> Cucumber <br>
+	<input type="checkbox", name="option13", value="yoghurt"> Yoghurt <br>
+	<input type="checkbox", name="option14", value="cream"> Cream <br>
+	<input type="checkbox", name="option15", value="ham"> Ham <br>
+	<input type="checkbox", name="option16", value="cheese"> Cheese <br>
+	<input type="checkbox", name="option17", value="chickpeas"> Chickpeas <br>
+	<input type="checkbox", name="option18", value="butter"> Butter <br>
+	<input type="checkbox", name="option19", value="garlic"> Garlic <br>
+	<input type="checkbox", name="option20", value="chicken"> Chicken <br>
+	<input type="checkbox", name="option21", value="beef"> Beef <br>	
 	<br>
 	<input type="submit" value="Submit">
 </form>
 
 
 
-{% endblock %}
+
+    </div>
+
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  
+
+
+  <script>
+
+    $(document).ready(function() {
+      $('#register').on('click', function() {
+        document.location = '/register';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#login').on('click', function() {
+        document.location = '/login';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#logout').on('click', function() {
+        document.location = '/logout';
+      });
+    });
+
+    $(document).ready(function() {
+      $('#fridge').on('click', function() {
+        document.location = '/make-a-meal-from-fridge';
+      });
+    });
+
+
+
+  </script>
+
+
+  </body>
+
+</html>

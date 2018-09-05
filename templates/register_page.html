@@ -5,13 +5,45 @@
 {% block content %}
 
 
-<h1> Welcome! Let's register! ;) </h1>
-<form action="/register" method="POST">
-	First name:<input type="text", name="fname"><br><br>
-	Last name:<input type="text", name="lname"><br><br>
-	Email:<input type="text", name="email"><br><br>
+<h1> Welcome! Let's register!  </h1>
+<!-- <form action="/register" class="login_form" method="POST">
+	First name:<input type="text", name="fname"><br>
+	Last name:<input type="text", name="lname"><br>
+	Email:<input type="text", name="email"><br>
 	Password:<input type="password", name="password"><br><br>
 	<input type="submit" value="Register" class="register-btn">
+</form> -->
+
+
+
+<form action="/register" method="POST">
+  <div class="form-group">
+    <label for="exampleInputFname">First name</label>
+    <input type="text" name="fname" class="form-control" id="exampleInputFname" aria-describedby="fnameHelp" placeholder="Enter fname">
+  </div>
+
+  <div class="form-group">
+    <label for="exampleInputEmail1">Last name</label>
+    <input type="text" name="lname" class="form-control" id="exampleInputLname" aria-describedby="lnameHelp" placeholder="Enter lname">
+  </div>
+
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+<!--   <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+  </div> -->
+  <button type="submit" value="Login" class="btn btn-primary">Register</button>
 </form>
+
+
 
 {% endblock %}
