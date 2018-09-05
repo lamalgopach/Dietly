@@ -33,10 +33,10 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand" href="#">Hidden brand</a>
+      <a class="navbar-brand" href="http://0.0.0.0:5000">Dietly</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+          <a class="nav-link" href="http://0.0.0.0:5000">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Link</a>
@@ -69,9 +69,20 @@
     </div>
   </nav>
 <style>
-div {
-    column-count: 3;
-}
+
+
+	div {
+	    column-count: 3;
+	    font-size: 14pt;
+		}
+	
+	p {
+
+		text-align: center;
+		column-count: 1;
+	}
+
+
 </style>
 
 
@@ -89,25 +100,8 @@ div {
 
 
 <form action="/make-a-meal-from-fridge" method="POST">
-	<br>
-	Tell me what is in your fridge
-	<br>
-	<br>
 
-<!-- <div class="row">
-  <div class="column"></div>
-  <h1> sdjfhgashdg</h1>
-  <div class="column">
-    <h1>sdjfhgashdg</h1>
-
-    </div>
-</div>
- -->
-
-
-
-
-	<input type="checkbox", name="option1", value="chicken"> Chicken <br>
+	<br><input type="checkbox", name="option1", value="chicken"> Chicken <br>
 	<input type="checkbox", name="option2", value="tomato"> Tomato <br>
 	<input type="checkbox", name="option3", value="avocado"> Avocado <br>
 	<input type="checkbox", name="option4", value="onion"> Onion <br>
@@ -117,25 +111,46 @@ div {
 	<input type="checkbox", name="option8", value="pepper"> Pepper <br>
 	<input type="checkbox", name="option9", value="parsley"> Parsley <br>
 	<input type="checkbox", name="option10", value="potato"> Potato <br>
-	<input type="checkbox", name="option11", value="eggs"> Eggs <br><br><br><br><br><br><br>
+	<input type="checkbox", name="option11", value="eggs"> Eggs <br><br><br><br><br><br>
 	<input type="checkbox", name="option12", value="cucumber"> Cucumber <br>
 	<input type="checkbox", name="option13", value="yoghurt"> Yoghurt <br>
-	<input type="checkbox", name="option14", value="cream"> Cream <br>
+	<input type="checkbox", name="option14", value="cream"> Sour cream <br>
 	<input type="checkbox", name="option15", value="ham"> Ham <br>
 	<input type="checkbox", name="option16", value="cheese"> Cheese <br>
 	<input type="checkbox", name="option17", value="chickpeas"> Chickpeas <br>
 	<input type="checkbox", name="option18", value="butter"> Butter <br>
 	<input type="checkbox", name="option19", value="garlic"> Garlic <br>
-	<input type="checkbox", name="option20", value="chicken"> Chicken <br>
-	<input type="checkbox", name="option21", value="beef"> Beef <br>	
+	<input type="checkbox", name="option20", value="breast"> Chicken Breast <br>
+	<input type="checkbox", name="option21", value="beef"> Ground Beef <br>	
+	<input type="checkbox", name="option22", value="apple"> Apple <br>
+	<input type="checkbox", name="option23", value="lettuce"> Lettuce <br><br><br><br><br>
+	<input type="checkbox", name="option24", value="honey"> Honey <br>
+	<input type="checkbox", name="option25", value="ketchup"> Ketchup <br>
+	<input type="checkbox", name="option26", value="mayo"> Mayo <br>
+	<input type="checkbox", name="option27", value="cauliflower"> Cauliflower <br>
+	<input type="checkbox", name="option28", value="mustard"> Brown/Dijon Mustard <br>
+	<input type="checkbox", name="option29", value="cod"> Cod <br>
+	<input type="checkbox", name="option30", value="mushrooms"> Mushroms <br>
+	<input type="checkbox", name="option31", value="sausage"> Sausage <br>
+	<input type="checkbox", name="option32", value="zucchini"> Zucchini <br>
+	<input type="checkbox", name="option33", value="vinegar"> Vinegar - Balsamic <br>
+	<input type="checkbox", name="option34", value="peppers"> Peppers <br>
 	<br>
-	<input type="submit" value="Submit">
+	<input type="submit" value="Submit" class="btn btn-primary">
+
 </form>
 
 
 
 
     </div>
+<!-- 
+    	<p>
+	<h1>Tell me what is in your fridge</h1>
+	</p>
+	<br>
+	<br> -->
+
 
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>

@@ -7,7 +7,7 @@
 
 <h1> Do you have any of the following allergies? ;) </h1>
 <h2> If yes - check the box! :) </h2>
-<form action="/allergy" method="POST">
+<!-- <form action="/allergy" method="POST">
 	<br>
 	Allergies: 
 	<br>
@@ -21,8 +21,48 @@
 	<input type="checkbox", name="allergen7", value="Milk"> Milk <br>
 	<br>
 	<input type="submit" value="Submit">
-</form>
+</form> -->
 
+
+<form action="/allergy" method="POST">
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen1" value="Gluten" class="custom-control-input" id="defaultUnchecked1">
+    <label class="custom-control-label" for="defaultUnchecked1">Gluten</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen2" value="Wheat" class="custom-control-input" id="defaultUnchecked2">
+    <label class="custom-control-label" for="defaultUnchecked2">Wheat</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen3" value="Tree-Nuts" class="custom-control-input" id="defaultUnchecked3">
+    <label class="custom-control-label" for="defaultUnchecked3">Tree-Nuts</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen4" value="Shellfish" class="custom-control-input" id="defaultUnchecked4">
+    <label class="custom-control-label" for="defaultUnchecked4">Shellfish</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen5" value="Soy" class="custom-control-input" id="defaultUnchecked5">
+    <label class="custom-control-label" for="defaultUnchecked5">Soy</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen6" value="Eggs" class="custom-control-input" id="defaultUnchecked6">
+    <label class="custom-control-label" for="defaultUnchecked6">Eggs</label>
+</div>
+
+<div class="custom-control custom-checkbox">
+    <input type="checkbox" name="allergen7" value="Milk" class="custom-control-input" id="defaultUnchecked7">
+    <label class="custom-control-label" for="defaultUnchecked7">Milk</label>
+</div>
+
+<input type="submit" value="Submit" class="btn btn-primary">
+</form>
 
 
 {% endblock %}	
