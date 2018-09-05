@@ -479,7 +479,7 @@ def get_user_pick_and_add_mealplan_to_db():
 	db.session.commit()
 
 
-	return redirect('/display-all-mealplans')
+	return redirect('/shopping-list')
 
 
 
@@ -1109,7 +1109,39 @@ def make_a_meal_from_fridge():
 	parsley = request.form.get("option9")
 	potato = request.form.get("option10")
 
+
+	eggs = request.form.get("option11")
+	cucumber = request.form.get("option12")
+	yoghurt = request.form.get("option13")
+	cream = request.form.get("option14")
+	ham = request.form.get("option15")
+	cheese = request.form.get("option16")
+	chickpeas = request.form.get("option17")
+	butter = request.form.get("option18")
+	garlic = request.form.get("option19")
+	breast = request.form.get("option20")
+
+
+	beef = request.form.get("option21")
+	apple = request.form.get("option22")
+	lettuce = request.form.get("option23")
+	honey = request.form.get("option24")
+	ketchup = request.form.get("option25")
+	mayo = request.form.get("option26")
+	cauliflower = request.form.get("option27")
+
+
+	mustard = request.form.get("option28")
+	cod = request.form.get("option29")
+	mushrooms = request.form.get("option30")
+	sausage = request.form.get("option31")
+	zucchini = request.form.get("option32")
+	vinegar = request.form.get("option33")
+	peppers = request.form.get("option34")
+
+
 	ingredients = []
+
 	ingredients.append(chicken)
 	ingredients.append(tomato)
 	ingredients.append(avocado)
@@ -1119,6 +1151,36 @@ def make_a_meal_from_fridge():
 	ingredients.append(pepper)
 	ingredients.append(parsley)
 	ingredients.append(potato)
+
+	ingredients.append(eggs)
+	ingredients.append(cucumber)
+	ingredients.append(yoghurt)
+	ingredients.append(cream)
+	ingredients.append(ham)
+	ingredients.append(cheese)
+	ingredients.append(chickpeas)
+	ingredients.append(butter)
+	ingredients.append(garlic)
+	ingredients.append(breast)
+
+	ingredients.append(beef)
+	ingredients.append(apple)
+	ingredients.append(lettuce)
+	ingredients.append(honey)
+	ingredients.append(ketchup)
+	ingredients.append(mayo)
+	ingredients.append(cauliflower)
+
+	ingredients.append(mustard)
+	ingredients.append(cod)
+	ingredients.append(mushrooms)
+	ingredients.append(sausage)
+	ingredients.append(zucchini)
+	ingredients.append(vinegar)
+	ingredients.append(peppers)
+
+
+
 
 	results = []
 
