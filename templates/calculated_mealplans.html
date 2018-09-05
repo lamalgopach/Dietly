@@ -5,31 +5,38 @@
 {% block content %}
 
 
-	<h1> Your mealplan: </h1>
-	<ol>
-	{% for result in results %}
-		<li>PLAN</li>
-		{% for r in result %}<br><br>
-			<img src="{{ r['image'] }}"><br><br>
-			<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br><br>
+	<h1> Your mealplans: </h1>
+	<div class="container">	
+		<ol>
+			{% for result in results %}
+				<div class="row">
+					<li class="plan-header">PLAN</li>
+					<form action="/add-mealplan" method="POST">
+					<input type="hidden" name="recipes_list" value="{{ result }}">
+					<input type="submit" value="Add" class="btn"> </form>
+				</div>
+				<div class="row">
+					{% for r in result %}<br><br>
+						<div class="col-sm">
+							<img src="{{ r['image'] }}"><br><br>
+							<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br><br>
 
-			Number of servings: {{ r['servings'] }}<br>
-			Calories per serving: {{ (r['calories'] / r['servings']) | round }}kcal <br>
-		    Carbohydrates: {{ (r['carbohydrates'] / r['servings']) | round }}g <br>
-		    Fat: {{ (r['fat'] / r['servings']) | round }}g <br>
-		    Protein: {{ (r['protein'] / r['servings']) | round }}g <br>
-
-			{% endfor %}<br>
-		<form action="/add-mealplan" method="POST">
-		<input type="hidden" name="recipes_list" value="{{ result }}">
-		<input type="submit" value="Add">
-		<br><br>	
-	{% endfor %}
+							Number of servings: {{ r['servings'] }}<br>
+							Calories per serving: {{ (r['calories'] / r['servings']) | round }}kcal <br>
+						    Carbohydrates: {{ (r['carbohydrates'] / r['servings']) | round }}g <br>
+						    Fat: {{ (r['fat'] / r['servings']) | round }}g <br>
+						    Protein: {{ (r['protein'] / r['servings']) | round }}g <br>
+						</div>
+					{% endfor %}<br>
 
 
-	</ol>
+				</div>
+				<br><br>	
+			{% endfor %}
 
-	<form action="http://0.0.0.0:5000/preferences">
+		</ol>
+	</div>
+	<f1orm action="http://0.0.0.0:5000/preferences">
     	<input type="submit" value="Let me change my mind!" />
 	</form>
 
