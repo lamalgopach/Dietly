@@ -3,64 +3,79 @@
 {% block title %}Selection of {{ user }}'s lunch{% endblock %}
 
 {% block content %}
-
-	<h1> Your recipes: </h1>
-
-	{% for result in results %}
 	<br>
-	<h1>{{ result["recipe_name"] }}</h1> 
-	<img src="{{ result['recipe_image'] }}">
+	<div class="header"><h1> Your recipes! </h1> </div>
+		<div class="row">
+			{% for result in results %}
+				<div class="col-sm">
+				<br>
+					<div class="link-header">
+						<h4><a href="{{ result['directions'] }}">{{ result["recipe_name"] }}</a></h4> 
+					</div>
+				<img src="{{ result['recipe_image'] }}">
 
-	<form action="/add-lunch" method="POST">
-	<input type="hidden" name="recipe_name" value="{{ result['recipe_name'] }}">
-	<input type="hidden" name="recipe_url" value="{{ result['recipe_url'] }}">
-	<input type="hidden" name="recipe_image" value="{{ result['recipe_image'] }}">
-	<input type="hidden" name="directions" value="{{ result['directions'] }}">
-	<input type="hidden" name="servings" value="{{ result['servings'] }}">
-	<input type="hidden" name="calories" value="{{ result['calories'] }}">
-	<input type="hidden" name="carbohydrates" value="{{ result['carbohydrates'] }}">
-	<input type="hidden" name="fat" value="{{ result['fat'] }}">
-	<input type="hidden" name="protein" value="{{ result['protein'] }}">
-	<input type="hidden" name="ingredients" value="{{ result['ingredients'] }}">
-	<input type="hidden" name="cautions" value="{{ result['cautions'] }}">
-	<input type="hidden" name="diets" value="{{ result['diets'] }}">
+				<form action="/add-lunch" method="POST">
 
-	<input type="submit" value="Add">
+				<input type="hidden" name="recipe_name" value="{{ result['recipe_name'] }}">
+				<input type="hidden" name="recipe_url" value="{{ result['recipe_url'] }}">
+				<input type="hidden" name="recipe_image" value="{{ result['recipe_image'] }}">
+				<input type="hidden" name="directions" value="{{ result['directions'] }}">
+				<input type="hidden" name="servings" value="{{ result['servings'] }}">
+				<input type="hidden" name="calories" value="{{ result['calories'] }}">
+				<input type="hidden" name="carbohydrates" value="{{ result['carbohydrates'] }}">
+				<input type="hidden" name="fat" value="{{ result['fat'] }}">
+				<input type="hidden" name="protein" value="{{ result['protein'] }}">
+				<input type="hidden" name="ingredients" value="{{ result['ingredients'] }}">
+				<input type="hidden" name="cautions" value="{{ result['cautions'] }}">
+				<input type="hidden" name="diets" value="{{ result['diets'] }}">
 
-	</form>
+				<input type="submit" class="btn btn-primary" value="Add">
 
-	<br>
+				
+			 	
 
-	<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
-	  See nutrition facts
-	</button>
 
-	<!-- Modal -->
-	<div class="modal fade" id="{{ result['calories']|round|int }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Nutrition facts:</h5>
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-	          <span aria-hidden="true">&times;</span>
-	        </button>
-	      </div>
-	      <div class="modal-body">
-	        Calories: {{ (result['calories'] / result['servings'])|round }}kcal <br>
-	        Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
-	        Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
-	        Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
 
-	      </div>
-	    </div>
-	  </div>
+
+				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
+				  See nutrition facts
+				</button>
+
+				<!-- Modal -->
+				<div class="modal fade" id="{{ result['calories']|round|int }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+				  <div class="modal-dialog" role="document">
+				    <div class="modal-content">
+				      <div class="modal-header">
+				        <h5 class="modal-title" id="exampleModalLabel">Nutrition facts</h5>
+				        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+				          <span aria-hidden="true">&times;</span>
+				        </button>
+				      </div>
+				      <div class="modal-body">
+				        Calories: {{ (result['calories'] / result['servings'])|round }}kcal <br>
+				        Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
+				        Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
+				        Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
+				      </div>
+				      <div class="modal-footer">
+				        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				      </div>
+				    </div>
+				  </div>
+				</div>
+			</div>
+		</form>
+		{% endfor %}
 	</div>
 
-	{% endfor %}
 
+	<br> <br>
+	<form action="http://0.0.0.0:5000/preferences">
+    	<input type="submit" class="btn btn-primary" value="Let me change my mind!" />
+	</form>
+	</div>
+
+	
 	<script>
 		// make sure autofocus works in HTML5
 		$('#myModal').on('shown.bs.modal', function () {
