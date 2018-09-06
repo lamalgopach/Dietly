@@ -1079,13 +1079,7 @@ def get_shopping_list():
 		recipes_ing_lst.append(ingredient_lst)
 
 
-
-
-
-
-
-
-
+# down is not so nice list backend but with the amount od the ingredients
 
 	# ingredient_dictionary = {}
 	# for ing in ingredient_ids:
