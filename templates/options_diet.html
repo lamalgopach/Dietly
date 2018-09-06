@@ -24,59 +24,67 @@
  -->
 
 
-<form action="/options" method="POST">
-<h2> Please select type of diet: </h2>
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option1" value="Alcohol-Free" class="custom-control-input" id="d1">
-    <label class="custom-control-label" for="d1">Alcohol-Free</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option2" value="Peanut-Free" class="custom-control-input" id="d2">
-    <label class="custom-control-label" for="d2">Peanut-Free</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option3" value="Sugar-Conscious" class="custom-control-input" id="d3">
-    <label class="custom-control-label" for="d3">Sugar-Conscious</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option4" value="Tree-Nut-Free" class="custom-control-input" id="d4">
-    <label class="custom-control-label" for="d4">Tree-Nut-Free</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option5" value="Vegan" class="custom-control-input" id="d5">
-    <label class="custom-control-label" for="d5">Vegan</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option6" value="Vegeterian" class="custom-control-input" id="d6">
-    <label class="custom-control-label" for="d6">Vegeterian</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option7" value="High-Protein" class="custom-control-input" id="d7">
-    <label class="custom-control-label" for="d7">High-Protein</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option8" value="Low-Carb" class="custom-control-input" id="d8">
-    <label class="custom-control-label" for="d8">Low-Carb</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option9" value="Low-Fat" class="custom-control-input" id="d9">
-    <label class="custom-control-label" for="d9">Low-Fat</label>
-</div>
-
-<div class="custom-control custom-checkbox">
-    <input type="checkbox" name="option10" value="Balanced" class="custom-control-input" id="d10">
-    <label class="custom-control-label" for="d10">Balanced</label>
-</div>
-
+<form action="/options" class="center-diets" method="POST">
+<h2> Please select the type(s) of preferred diet(s): </h2>
 <br>
+<div class="form-check">
+    <input type="checkbox" name="option1" value="Alcohol-Free" class="form-check-input" id="d1">
+    <label class="form-check-label" for="d1">Alcohol-Free</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option2" value="Peanut-Free" class="form-check-input" id="d2">
+    <label class="form-check-label" for="d2">Peanut-Free</label>
+</div>
+
+<!-- <div class="form-check">
+  <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+  <label class="form-check-label" for="defaultCheck1">
+    Default checkbox
+  </label>
+</div> -->
+
+<div class="form-check">
+    <input type="checkbox" name="option3" value="Sugar-Conscious" class="form-check-input" id="d3">
+    <label class="form-check-label" for="d3">Sugar-Conscious</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option4" value="Tree-Nut-Free" class="form-check-input" id="d4">
+    <label class="form-check-label" for="d4">Tree-Nut-Free</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option5" value="Vegan" class="form-check-input" id="d5">
+    <label class="form-check-label" for="d5">Vegan</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option6" value="Vegeterian" class="form-check-input" id="d6">
+    <label class="form-check-label" for="d6">Vegeterian</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option7" value="High-Protein" class="form-check-input" id="d7">
+    <label class="form-check-label" for="d7">High-Protein</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option8" value="Low-Carb" class="form-check-input" id="d8">
+    <label class="form-check-label" for="d8">Low-Carb</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option9" value="Low-Fat" class="form-check-input" id="d9">
+    <label class="form-check-label" for="d9">Low-Fat</label>
+</div>
+
+<div class="form-check">
+    <input type="checkbox" name="option10" value="Balanced" class="form-check-input" id="d10">
+    <label class="form-check-label" for="d10">Balanced</label>
+</div>
+
+
 
 <input type="submit" value="Submit" class="btn btn-primary">
 </form>
