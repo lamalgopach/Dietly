@@ -12,12 +12,14 @@ body, h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-
-    margin: 0;       
+   background-image: url("cook-food-kitchen-eat-54455.jpeg");
+   background-repeat: repeat-y;
+   height: 120;
 }
 
-
-
+.container {
+    background: white;
+}
 
 
 .fridge-recipes {
@@ -32,6 +34,7 @@ body {
 
     margin-left: 10px;
     margin-bottom: 10px;
+    margin-top: 20px;
 
 
 }
@@ -42,9 +45,24 @@ body {
 
 }
 
-.rec-image {
-    text-align: center;
+.rec-link {
+  background: white;
+  margin-top: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  text-align: center;
+    
+}
 
+.rec-link-calc {
+  background: white;
+  padding-top: 15px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding-left: 13px;
+/*  margin-left: 8px;
+    margin-right: 1px;*/
 
 }
 
@@ -71,3 +89,39 @@ body {
 
     font-size: 1.2em
 }
+
+.center-allergies {
+
+     margin-left: 30px;
+     font-size: 19.5px;
+    margin-bottom: 10px;
+}
+
+.center-diets {
+
+     margin-left: 30px;
+     font-size: 19.5px;
+    margin-bottom: 10px;
+}
+
+
+.shopping {
+
+  background: white;
+  margin-top: 30px;
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-bottom: 30px;
+  padding-top: 30px;
+}
+
+/*.fridge-recipes {
+  background: white;
+/*margin-left: 100px;*/
+/*  padding-left: 110px;
+  padding-right: 30px;
+  padding-bottom: 90px;*/
+/*  padding-top: 50px;
+*/
+
+/*}*/
