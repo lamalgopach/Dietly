@@ -4,17 +4,24 @@
 
 {% block content %}
 
-	<form class="fridge-recipes">
-<!-- 		<h1> Your recipes: </h1> -->
+
+<!-- 	<div class="fridge-recipes"> -->
+		<div class="row">
 			{% for result in results %}
-				<div class="rec-image">
-					<img src="{{ result['recipe_image'] }}"><br><br>
+				<div class="col-sm">
+					<div class="rec-image">
+						<img src="{{ result['recipe_image'] }}"><br>
+					</div>
+					<div class="rec-image">
+						<a href="{{ result['recipe_url'] }}">{{ result['recipe_name'] }}</a>
+					</div>	
+				   <br><br>
 				</div>
-				<div class="rec-image">
-					<a href="{{ result['recipe_url'] }}">{{ result['recipe_name'] }}</a>
-				</div>	
-				<br>
+
 			{% endfor %}
-	</form>
+		</div>
+	<!-- </div> -->
+
+
 
 {% endblock %}	
