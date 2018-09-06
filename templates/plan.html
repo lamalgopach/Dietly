@@ -4,23 +4,26 @@
 	{% block title %}Selection of {{ user }}'s breakfast{% endblock %}	
 		{% block content %}
 
-
+   <div class="container">
+   	<br> <br>
+   		<div class="row">
 			{% for recipe in lst_of_recipes %}
+				<div class="col-sm">
 
-				<li>Recipe name: {{ recipe['recipe_name'] }} <br>
 				<img src="{{ recipe['recipe_image'] }}"> <br>
-				<a href="{{ recipe['directions'] }}">{{ recipe['recipe_name'] }}</a><br></li>
-
+				<h4><a href="{{ recipe['directions'] }}">{{ recipe['recipe_name'] }}</a></h4><br>
+				</div>
 			{% endfor %}
+		</div>
+		<br>
+			<h5>Whole plan nutrition facts</h5>
 
-			<h1>Whole plan nutrition facts:</h1>
 
-
-			<li>Calories: {{ nutritions['calories'] | round }} kcal <br>
+			Calories: {{ nutritions['calories'] | round }} kcal <br>
 			Carbohydrates: {{ nutritions['carbohydrates'] | round }}g <br>
 			Fat: {{ nutritions['fat'] | round }}g <br>
-			Protein: {{ nutritions['protein'] | round }}g</li>
-
+			Protein: {{ nutritions['protein'] | round }}g
+</div>
 
 
 

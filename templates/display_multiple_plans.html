@@ -5,16 +5,31 @@
 {% block content %}
 
 
-<h5><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h5>
+<!-- <h5><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h5> -->
 <!--   <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Your plan</a>
   <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#multiCollapseExample2" aria-expanded="false" aria-controls="multiCollapseExample2">Recipes and nutritions</button>
-  <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="multiCollapseExample1 multiCollapseExample2">Not sure if I need that xD</button>
+
 </p>
 <div class="row">
   <div class="col">
     <div class="collapse multi-collapse" id="multiCollapseExample1">
       <div class="card card-body"> -->
 
+   <div class="container">
+    <br>
+      <form class="plans-recipes">
+         <h6>Your mealplans:</h6>
+        {% for plan in plan_lst %}
+
+      <li>Plan name: <a href="http://0.0.0.0:5000/plans/{{ plan['plan_id'] }}">{{ plan['name'] }}</a> <br>
+      Calories: {{ plan['calories'] }} kcal<br>
+      Carbohydrates: {{ plan['carbohydrates'] }}g<br>
+      Fat: {{ plan['fat'] }}g<br>
+      Protein: {{ plan['protein'] }}g</li>
+      <br>
+     {% endfor %}
+      </form>
+  </div>
 
 
 

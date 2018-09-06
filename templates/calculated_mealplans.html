@@ -1,48 +1,76 @@
 {% extends 'base.html' %}
 
 
-{% block title %}Selection of {{ user }}'s breakfast{% endblock %}
+{% block title %}Selection of {{ user }}'s mealplan {% endblock %}
 {% block content %}
 
 <!-- 
 	<h1> Your mealplans: </h1> -->
 	<div class="container">	
 		<ol>
-			{% for result in results %}
-				<div class="row">
-					<!-- <li class="plan-header">PLAN</li> -->
-					<form action="/add-mealplan" method="POST">
-					<input type="hidden" name="recipes_list" value="{{ result }}">
-					<input type="submit" value="Add to my mealplans and display the shopping list!" class="btn btn-primary btn-block"> </form>
-				</div>
+		{% for result in results %}
+			
 				<div class="row">
 					{% for r in result %}<br><br>
 						<div class="col-sm">
-							<img src="{{ r['image'] }}"><br><br>
-							<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br><br>
 
-							Number of servings: {{ r['servings'] }}<br>
-							Calories per serving: {{ (r['calories'] / r['servings']) | round }}kcal <br>
-						    Carbohydrates: {{ (r['carbohydrates'] / r['servings']) | round }}g <br>
-						    Fat: {{ (r['fat'] / r['servings']) | round }}g <br>
-						    Protein: {{ (r['protein'] / r['servings']) | round }}g <br>
+								<img src="{{ r['image'] }}"><br><br>
+
+<!-- 							<div class="rec-link"> -->
+							<button type="button" class="btn btn-info" data-toggle="modal" data-target="#{{ r['calories']|round|int }}">
+							  	See nutrition facts
+							</button>	
+							<div class="modal fade" id="{{ r['calories']|round|int }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+							  	<div class="modal-dialog" role="document">
+							    	<div class="modal-content">
+							      		<div class="modal-header">
+							        		<h5 class="modal-title" id="exampleModalLabel">Nutrition facts</h5>
+							        		<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							          			<span aria-hidden="true">&times;</span>
+							        		</button>
+							      		</div>
+								      	<div class="modal-body">
+										<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br><br>
+										Number of servings: {{ r['servings'] }}<br>
+										Calories per serving: {{ (r['calories'] / r['servings']) | round }}kcal <br>
+									    Carbohydrates: {{ (r['carbohydrates'] / r['servings']) | round }}g <br>
+									    Fat: {{ (r['fat'] / r['servings']) | round }}g <br>
+									    Protein: {{ (r['protein'] / r['servings']) | round }}g <br>
+								   		</div>
+								   		
+					      				<div class="modal-footer">
+					        				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					      				</div>
+				    			  	</div>
+				  				</div>
+							</div>
 						</div>
-					{% endfor %}<br>
+					{% endfor %}	
 
-
-				</div>
-				<br><br>	
-			{% endfor %}
+					<div class="row">
+				<!-- <li class="plan-header">PLAN</li> -->
+				<form action="/add-mealplan" method="POST">
+				<input type="hidden" name="recipes_list" value="{{ result }}">
+				<input type="submit" value="Add that mealplan to my mealplans and display the shopping list!" class="btn btn-success"> </form>
+			</div>
+			</div><br><br>
+		{% endfor %}
 
 		</ol>
 	</div>
+
 	<form action="http://0.0.0.0:5000/preferences">
-    	<input type="submit" class="btn btn-primary" value="Let me change my mind!" />
+    	<input type="submit" class="btn btn-success" value="Let me change my mind!" />
 	</form>
 
 
 <!-- 	<a href="http://0.0.0.0:5000/display-all-mealplans">Check your mealplans!</a><br><br> -->
-
+	<script>
+		// make sure autofocus works in HTML5
+		$('#myModal').on('shown.bs.modal', function () {
+		  $('#myInput').trigger('focus')
+		})
+	</script>
 
 
 {% endblock %}	

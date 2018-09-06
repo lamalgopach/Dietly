@@ -5,48 +5,24 @@
 {% block content %}
 
 <h1> Your mealplan for today: </h1>
-<h5><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h5>
 
+
+<div class="row">
 {% for result in results %}
-	<li>
-	<a href="{{ result['directions'] }}">{{ result['recipe_name'] }}</a><br><br>
+	<div class="col-sm">
 
+	<h4><a href="{{ result['directions'] }}">{{ result['recipe_name'] }}</a></h4><br>
+	<img src="{{ result['recipe_image'] }}"><br><br><br>
 	Number of servings: {{ result['servings'] }}<br>
 	Calories per serving: {{result['calories_per_serving'] | round }}kcal <br>
     Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
     Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
     Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
-
-
-	<div class="row">
-	  <div class="column" style="background-color:#aaa;">
-	    <h2>Column 1</h2>
-	    <p>Some text..</p>
-	  </div>
-	  <div class="column" style="background-color:#bbb;">
-	    <h2>Column 2</h2>
-	    <p>Some text..</p>
-	  </div>
-	  <div class="column" style="background-color:#ccc;">
-	    <h2>Column 3</h2>
-	    <p>Some text..</p>
-	  </div>
+	<br>
 	</div>
 
-
-
-
-
-
-
-
-
-    
-
-
-	</li>
-	<img src="{{ result['recipe_image'] }}"><br><br><br>
 {% endfor %}
+</div>
 
 	<h3>Whole plan nutrition facts:</h3>
 		Calories: {{ calories_sum | round }}
@@ -54,7 +30,8 @@
 		<br>Fat: {{ fat_sum | round }}
 		<br>Protein: {{ protein_sum | round }}
 
-
+<br><br>
+<h3><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h3>
 
 {% endblock %}	
 

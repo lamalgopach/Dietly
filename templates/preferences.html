@@ -5,67 +5,65 @@
 {% block content %}
 
 
-<h1> {{ user }}, let's create a mealplan! </h1>
+
 
 
 
 <form id="preferences" method="POST">
+    <div class="card  my-3">
+      <div class="card-body">
+		<h1> {{ user }}, let's create a mealplan! </h1>
+		  <div class="form-row">
+			  <div class="form-group col-md-6">
+			    <label for="plan_name">Plan name</label>
+			    <input type="text" name="plan_name" required class="form-control" id="plan_name" placeholder="My meal plan...">
+			  </div>
 
-  <div class="form-group">
-    <label for="plan_name">Plan name</label>
-    <input type="text" name="plan_name" required class="form-control" id="plan_name" placeholder="My meal plan...">
-  </div>
+			  <div class="form-group col-md-6">
+			    <label for="calories">Calories</label>
+			    <input type="number" name="calories"  max=4000 required class="form-control" id="calories" placeholder="Up to 4000kcal">
+			  </div>
+		</div>
 
-  <div class="form-group">
-    <label for="calories">Calories</label>
-    <input type="number" name="calories"  max=4000 required class="form-control" id="calories" placeholder="Up to 4000kcal">
-  </div>
+		<br>
 
-<br>
+		<span class="macros">
+			<div class="form-check">
+			  <input class="form-check-input" type="radio" name="macro" value="grams" id="grams" checked required>
+			  <label class="form-check-label" for="grams">
+			    Marco-nutrients in grams
+			  </label>
+			</div>
+			<div class="form-check">
+			  <input class="form-check-input" type="radio" name="macro" value="percentage" id="percentage">
+			  <label class="form-check-label" for="percentage">
+			    Marco-nutrients in %
+			  </label>
+			</div>
+		</span>
 
-<span class="macros">
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="macro" value="grams" id="grams" checked required>
-  <label class="form-check-label" for="grams">
-    Marco-nutrients in grams
-  </label>
-</div>
-<div class="form-check">
-  <input class="form-check-input" type="radio" name="macro" value="percentage" id="percentage">
-  <label class="form-check-label" for="percentage">
-    Marco-nutrients in %
-  </label>
-</div>
-<!-- <div class="form-check disabled">
-  <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios3" value="option3" disabled>
-  <label class="form-check-label" for="exampleRadios3">
-    Disabled radio
-  </label>
-</div> -->
-</span>
+		<br>
 
-<br>
+		  <div class="form-row">
+		    <div class="form-group col-md-4">
+		      <label for="carbs">Carbohydrates</label>
+		      <input id="carbs" type="number" name="carbohydrates" min=0 max=200  class="form-control" placeholder="Carbohydrates" required>
+		    </div>
+		    <div class="form-group col-md-4">
+		      <label for="fat">Fat</label>
+		      <input id="fat" type="number" name="fat" min=0 max=200  class="form-control" placeholder="Fat" required>
+		    </div>
+		    <div class="form-group col-md-4">
+		      <label for="protein">Protein</label>
+		      <input id="protein" type="number" name="protein" min=0 max=200  class="form-control" placeholder="Protein" required>
+		    </div>
+		  </div>
 
-
-
-  <div class="form-row">
-    <div class="form-group col-md-4">
-      <label for="carbs">Carbohydrates</label>
-      <input id="carbs" type="number" name="carbohydrates" min=0 max=200  class="form-control" placeholder="Carbohydrates" required>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="fat">Fat</label>
-      <input id="fat" type="number" name="fat" min=0 max=200  class="form-control" placeholder="Fat" required>
-    </div>
-    <div class="form-group col-md-4">
-      <label for="protein">Protein</label>
-      <input id="protein" type="number" name="protein" min=0 max=200  class="form-control" placeholder="Protein" required>
-    </div>
-  </div>
-
-  <input type="button" id="breakfast" class="btn btn-primary" value="Show me just a breakfast!">
-  <input type="submit" id="mealplan" class="btn btn-primary" value="Show me whole mealplan!">
-
+		  <input type="button" id="breakfast" class="btn btn-success" value="Just A Breakfast">
+		  <input type="submit" id="mealplan" class="btn btn-success" value="Whole Mealplan">
+		</div>
+	</div>
+	</div>
 </form>
 
 

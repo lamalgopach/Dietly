@@ -4,7 +4,7 @@
 
 {% block content %}
 	<br>
-	<div class="header"><h1> Your recipes! </h1> </div>
+	<div class="header"><h1> Lunch recipes </h1> </div>
 		<div class="row">
 			{% for result in results %}
 				<div class="col-sm">
@@ -29,7 +29,7 @@
 				<input type="hidden" name="cautions" value="{{ result['cautions'] }}">
 				<input type="hidden" name="diets" value="{{ result['diets'] }}">
 
-				<input type="submit" class="btn btn-primary" value="Add">
+				<input type="submit" class="btn btn-success" value="Add">
 
 				
 			 	
@@ -37,7 +37,7 @@
 
 
 
-				<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
+				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
 				  See nutrition facts
 				</button>
 
@@ -71,7 +71,7 @@
 
 	<br> <br>
 	<form action="http://0.0.0.0:5000/preferences">
-    	<input type="submit" class="btn btn-primary" value="Let me change my mind!" />
+    	<input type="submit" class="btn btn-success" value="Let me change my mind!" />
 	</form>
 	</div>
 
