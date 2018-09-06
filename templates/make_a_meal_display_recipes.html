@@ -5,22 +5,24 @@
 {% block content %}
 
 
-<!-- 	<div class="fridge-recipes"> -->
 		<div class="row">
+
 			{% for result in results %}
+
 				<div class="col-sm">
-					<div class="rec-image">
+								
+					<div class="rec-link">
 						<img src="{{ result['recipe_image'] }}"><br>
 					</div>
-					<div class="rec-image">
+					<div class="rec-link">
 						<a href="{{ result['recipe_url'] }}">{{ result['recipe_name'] }}</a>
 					</div>	
-				   <br><br>
 				</div>
-
 			{% endfor %}
 		</div>
-	<!-- </div> -->
+
+
+
 
 
 
