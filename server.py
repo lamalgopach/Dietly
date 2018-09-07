@@ -485,9 +485,12 @@ def show_info_about_plan(plan_id):
 
 	lst_of_recipes = get_all_recipes_for_plan_id(plan_id)
 	nutritions = display_nutrition_facts_for_plan(plan_id)
+	plan = Plan.query.filter_by(plan_id=plan_id).first().plan_name
+	user_id = session['user_id']
+	user = User.query.filter_by(user_id=user_id).first().fname
 
 
-	return render_template("plan.html", lst_of_recipes=lst_of_recipes, nutritions=nutritions)
+	return render_template("plan.html", lst_of_recipes=lst_of_recipes, nutritions=nutritions, user=user, plan=plan)
 
 
 def get_all_recipes_for_plan_id(plan_id):
@@ -563,7 +566,7 @@ def user_breakfast_preferences():
 	cal_or_perc = request.form.get("macro")
 
 
-	breakfast = "pancake,cereal,milk"
+	breakfast = "cereal"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -658,7 +661,7 @@ def user_lunch_preferences():
 	lunch_limit_fat = fat * 0.65 - fat_used_in_breakfast
 	lunch_limit_protein = protein * 0.65 - protein_used_in_breakfast
 
-	lunch = "eggplant"
+	lunch = "salad"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -780,7 +783,7 @@ def user_dinner_preferences():
 	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
 	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
 
-	dinner = "milk"
+	dinner = "dinner"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)
@@ -1092,9 +1095,6 @@ def get_shopping_list():
 		# 	ingredient_dictionary[ingredient.ingredient_name] = recipe_ing_obj.amount
 		# else:
 		# 	ingredient_dictionary[ingredient.ingredient_name] += recipe_ing_obj.amount
-
-	print("nlaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa00")
-	print(recipes_ing_lst)
 
 	return render_template("display_shopping_list.html", results=recipes_ing_lst, recipes_names=recipes_names)
 

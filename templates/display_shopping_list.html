@@ -3,9 +3,11 @@
 {% block title %}Shopping list{% endblock %}
 
 {% block content %}
+
+<div class="container white-breakfast">
 <div class="shopping">
 <div class="header"> <h1> Your shopping list: </h1></div>
-<br><br><br><br>
+<br><br>
 <div class="row">
 {% for recipe_name in recipes_names %}
 	<div class="col-sm recipe-name-bolded">
@@ -32,6 +34,8 @@
 	{% endfor %}
 		</div>
 {% endfor %}
+</div>
+</div>
 </div>
 <!-- % for key, value in results.items() %} -->
 

@@ -4,8 +4,9 @@
 
 {% block content %}
 
+<div class="container white-bg">
+<br>
 
-<br><br>
 <h3> Check the box if you have any of these allergies: </h3>
 <!-- <form action="/allergy" method="POST">
 	<br>
@@ -24,6 +25,8 @@
 </form> -->
 
 <br>
+
+
 <form action="/allergy" class="center-allergies" method="POST">
 
 <div class="form-check">
@@ -61,9 +64,10 @@
     <label class="form-check-label" for="defaultUnchecked7">Milk</label>
 </div>
 
-
-<input type="submit" value="Submit" class="btn btn-primary">
+<br>
+<input type="submit" value="Submit" class="btn btn-success">
 </form>
+</div>
 
 
 {% endblock %}	

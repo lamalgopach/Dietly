@@ -3,36 +3,40 @@
 {% block title %}{{ user }}'s mealplan for today! {% endblock %}
 
 {% block content %}
-
-<h1> Your mealplan for today: </h1>
-
-
-<div class="row">
-{% for result in results %}
-	<div class="col-sm">
-
-	<h4><a href="{{ result['directions'] }}">{{ result['recipe_name'] }}</a></h4><br>
-	<img src="{{ result['recipe_image'] }}"><br><br><br>
-	Number of servings: {{ result['servings'] }}<br>
-	Calories per serving: {{result['calories_per_serving'] | round }}kcal <br>
-    Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
-    Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
-    Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
+<div class="container breakfast">
 	<br>
+	<div class="recipe-header"><h1> Your mealplan: </h1></div>
+	<div class="row">
+	{% for result in results %}
+		<div class="col-sm">
+			<div class="rec-link">
+				<img src="{{ result['recipe_image'] }}"><br><br>
+
+				<h5><a href="{{ result['directions'] }}">{{ result['recipe_name'] }}</a></h5>
+			</div>
+				Number of servings: {{ result['servings'] }}<br>
+				Calories per serving: {{result['calories_per_serving'] | round }}kcal <br>
+			    Carbohydrates: {{ (result['carbohydrates'] / result['servings'])|round }}g <br>
+			    Fat: {{ (result['fat'] / result['servings'])|round }}g <br>
+			    Protein: {{ (result['protein'] / result['servings'])|round }}g <br>
+				<br>
+			
+		</div>
+
+	{% endfor %}
 	</div>
 
-{% endfor %}
+		<h3>Whole plan nutrition facts:</h3>
+			Calories: {{ calories_sum | round }}
+			<br>Carbohydrates: {{ carbohydrates_sum | round }}
+			<br>Fat: {{ fat_sum | round }}
+			<br>Protein: {{ protein_sum | round }}
+	<br><br><br>
+	<div class="rec-link">
+		<h3><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h3>
+	</div>
+	<br><br>
 </div>
-
-	<h3>Whole plan nutrition facts:</h3>
-		Calories: {{ calories_sum | round }}
-		<br>Carbohydrates: {{ carbohydrates_sum | round }}
-		<br>Fat: {{ fat_sum | round }}
-		<br>Protein: {{ protein_sum | round }}
-
-<br><br>
-<h3><a href="http://0.0.0.0:5000/shopping-list">Let's check the shopping list!</a></h3>
-
 {% endblock %}	
 
 

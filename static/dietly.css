@@ -7,9 +7,7 @@
 	text-align: right;
 }
 
-body, h1, h2, h3, h4, h5, h6 {
-  font-family: 'M PLUS Rounded 1c', sans-serif;
-}
+
 
 body {
    background-image: url("cook-food-kitchen-eat-54455.jpeg");
@@ -17,10 +15,16 @@ body {
    height: 120;
 }
 
-.container {
+.white-bg {
     background: white;
+    margin-top: 15px;
+    padding-bottom: 20px;
+    padding-left:250px;
 }
 
+.container {
+
+}
 
 .fridge-recipes {
 
@@ -39,6 +43,13 @@ body {
 
 }
 
+.breakfast {
+    background: white;
+}
+
+
+
+
 .plan-header {
     font-weight: ;
     font-size: 1.5em ;
@@ -47,13 +58,38 @@ body {
 
 .rec-link {
   background: white;
-  margin-top: 10px;
+  margin-top: 30px;
   padding-top: 10px;
   padding-bottom: 10px;
   padding-left: 10px;
   text-align: center;
     
 }
+
+.rec-link-br {
+  background: white;
+/*  margin-top: 80px;*/
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  text-align: center;
+    
+}
+
+.recipe-header{
+/*  background: white;*/
+/*  margin-top: 80px;*/
+/*  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;*/
+  text-align: center;
+    
+}
+
+
+
+
+
 
 .rec-link-calc {
   background: white;
@@ -115,13 +151,7 @@ body {
   padding-top: 30px;
 }
 
-/*.fridge-recipes {
-  background: white;
-/*margin-left: 100px;*/
-/*  padding-left: 110px;
-  padding-right: 30px;
-  padding-bottom: 90px;*/
-/*  padding-top: 50px;
-*/
 
-/*}*/
+.dietly-small {
+  font-family: 'Parisienne', cursive;
+}

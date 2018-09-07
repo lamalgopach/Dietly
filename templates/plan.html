@@ -1,30 +1,27 @@
 {% extends 'base.html' %}
 
 
-	{% block title %}Selection of {{ user }}'s breakfast{% endblock %}	
-		{% block content %}
-
-   <div class="container">
-   	<br> <br>
+{% block title %}Selection of {{ user }}'s plans{% endblock %}	
+	{% block content %}
+<div class="container breakfast">
+	   	<br> <br>
+	<div class="recipe-header"><h1> Selection of recipes of your plan: {{ plan }} </h1></div>
    		<div class="row">
 			{% for recipe in lst_of_recipes %}
 				<div class="col-sm">
-
-				<img src="{{ recipe['recipe_image'] }}"> <br>
-				<h4><a href="{{ recipe['directions'] }}">{{ recipe['recipe_name'] }}</a></h4><br>
+					<div class="rec-link">
+						<img src="{{ recipe['recipe_image'] }}"> <br><br>
+						<h5><a href="{{ recipe['directions'] }}">{{ recipe['recipe_name'] }}</a></h5>
+					</div>
 				</div>
 			{% endfor %}
 		</div>
 		<br>
-			<h5>Whole plan nutrition facts</h5>
+		<h5>Whole plan nutrition facts</h5>
 
-
-			Calories: {{ nutritions['calories'] | round }} kcal <br>
-			Carbohydrates: {{ nutritions['carbohydrates'] | round }}g <br>
-			Fat: {{ nutritions['fat'] | round }}g <br>
-			Protein: {{ nutritions['protein'] | round }}g
+		Calories: {{ nutritions['calories'] | round }} kcal <br>
+		Carbohydrates: {{ nutritions['carbohydrates'] | round }}g <br>
+		Fat: {{ nutritions['fat'] | round }}g <br>
+		Protein: {{ nutritions['protein'] | round }}g
 </div>
-
-
-
-		{% endblock %}  
+{% endblock %}  

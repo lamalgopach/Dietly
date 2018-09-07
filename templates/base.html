@@ -5,46 +5,21 @@
     <title>{% block title %}Meal{% endblock %}</title>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="/static/dietly.css">
+ 
+
+
+
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 
-  <style>
-  @import url('https://fonts.googleapis.com/css?family=Lato');
-  </style>
+
+   <link rel="stylesheet" href="/static/dietly.css">
+   <link href="https://fonts.googleapis.com/css?family=Parisienne" rel="stylesheet">
 
 
     <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-
-    <link href='https://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
-
-      
-
-
-
-    {% for flash in get_flashed_messages() %}
-      {{ flash }}
-    {% endfor %}
-
-
-<!--   <nav class="navbar navbar-light bg-light">
-     <ul class="navbar-nav mr-auto">
-    <form class="form-inline">
-       <button class="btn btn-outline-success" type="button" id="fridge">Make a meal from your fridge</button>
-      {% if session['user_id'] %}  
-        <button class="btn btn-sm btn-outline-secondary" type="button" id="logout">Log Out</button>
-      {% else %}
-        <button class="btn btn-outline-success" type="button" id="register">Register</button>
-        <button class="btn btn-outline-success" type="button" id="login">Log In</button>
-       
-        
-      {% endif %}
-
-    </form>
-  </ul>
-  </nav> -->
 
 
 
@@ -54,7 +29,7 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
-      <a class="navbar-brand">Dietly</a>
+      <a class="navbar-brand dietly-small">Dietly</a>
       <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         <li class="nav-item active">
           <a class="nav-link" href="http://0.0.0.0:5000">Home <span class="sr-only">(current)</span></a>
@@ -112,7 +87,7 @@
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!--   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> -->
   
 
 

@@ -3,16 +3,20 @@
 {% block title %}Selection of {{ user }}'s breakfast{% endblock %}
 
 {% block content %}
-<div class="container">
-	<div class="header"><h1> Breakfast recipes </h1> </div>
+
+<div class="container breakfast">
+	<br>
+	<div class="recipe-header"><h1> Breakfast recipes </h1></div>
 		<div class="row">
 			{% for result in results %}
 				<div class="col-sm">
 				<br>
-					<div class="link-header">
-						<h4><a href="{{ result['directions'] }}">{{ result["recipe_name"] }}</a></h4> 
-					</div>
-				<img src="{{ result['recipe_image'] }}">
+				<div class="rec-link-br">
+					<img src="{{ result['recipe_image'] }}">
+				</div>
+				<div class="rec-link-br">
+					<a href="{{ result['directions'] }}">{{ result["recipe_name"] }}</a>
+				
 
 				<form action="/add-breakfast" method="POST">
 
@@ -31,7 +35,7 @@
 
 				<input type="submit" class="btn btn-success" value="Add">
 
-				
+
 			 	
 
 				<button type="button" class="btn btn-success" data-toggle="modal" data-target="#{{ result['calories']|round|int }}">
@@ -62,16 +66,20 @@
 				</div>
 			</div>
 		</form>
+		</div>
 		{% endfor %}
 	</div>
 
 
 	<br> <br>
+	<div class="rec-link">
 	<form action="http://0.0.0.0:5000/preferences">
     	<input type="submit" class="btn btn-success" value="Let me change my mind!" />
 	</form>
 	</div>
 </div>
+</div>
+
 
 	<script>
 		// make sure autofocus works in HTML5
