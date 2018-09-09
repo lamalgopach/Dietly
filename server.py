@@ -335,9 +335,8 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 	
 
 		for user_diet in user_diets:
-			if user_diet not in recipe_labels:
+			if user_diet not in labels:
 				has_diet_label = False
-
 
 		if has_allergy == False and has_diet_label == True:
 
@@ -415,7 +414,7 @@ def calculate_calories_from_recipes_depend_on_plan(user_id):
 									
 
 										for user_diet in user_diets:
-											if user_diet not in recipe_labels:
+											if user_diet not in labels:
 												has_diet_label = False
 
 
@@ -566,7 +565,7 @@ def user_breakfast_preferences():
 	cal_or_perc = request.form.get("macro")
 
 
-	breakfast = "cereal"
+	breakfast = "egg"
 
 	if cal_or_perc == "percentage":
 		carbohydrates = float(calories) * float(carbohydrates) / 400
@@ -661,7 +660,7 @@ def user_lunch_preferences():
 	lunch_limit_fat = fat * 0.65 - fat_used_in_breakfast
 	lunch_limit_protein = protein * 0.65 - protein_used_in_breakfast
 
-	lunch = "salad"
+	lunch = "broccoli"
 	#add a form to get a word
 	results = get_recipes_from_api(lunch, lunch_limit_calories, lunch_limit_carbohydrates, lunch_limit_fat, lunch_limit_protein, user_allergies, user_diets)
 
@@ -783,7 +782,7 @@ def user_dinner_preferences():
 	dinner_limit_fat = fat - fat_used_in_breakfast - fat_used_in_lunch
 	dinner_limit_protein = protein - protein_used_in_breakfast - protein_used_in_lunch
 
-	dinner = "dinner"
+	dinner = "margherita"
 	#add a form to get a word
 
 	results = get_recipes_from_api(dinner, dinner_limit_calories, dinner_limit_carbohydrates, dinner_limit_fat, dinner_limit_protein, user_allergies, user_diets)

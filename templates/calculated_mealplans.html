@@ -6,7 +6,9 @@
 
 <!-- 
 	<h1> Your mealplans: </h1> -->
-	<div class="container">	
+	<div class="container breakfast">
+
+		<div class="recipe-header"><h1> Your mealplans: </h1></div>
 		<ol>
 			<br> <br>
 		{% for result in results %}
@@ -14,9 +16,10 @@
 				<div class="row">
 					{% for r in result %}<br><br>
 						<div class="col-sm">
-							<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br>
-							<img src="{{ r['image'] }}"><br><br>
-
+							<div class="rec-link">
+								<img src="{{ r['image'] }}"><br><br>
+								<a href="{{ r['directions'] }}">{{ r['name'] }}</a><br>
+							</div>
 <!-- 							<div class="rec-link"> -->
 							<button type="button" class="btn btn-info" data-toggle="modal" data-target="#{{ r['calories']|round|int }}">
 							  	See nutrition facts
