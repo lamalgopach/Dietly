@@ -1231,8 +1231,23 @@ def logout():
 
 
 if __name__ == "__main__":
-	app.debug = True
-	app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-	DebugToolbarExtension(app)
-	connect_to_db(app)
+    # app.run()
+	# app.debug = True
+	# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+	# DebugToolbarExtension(app)
+	# connect_to_db(app)
 	app.run(host='0.0.0.0', port=5000)
+
+# if __name__ == "__main__":
+ #    # We have to set debug=True here, since it has to be True at the point
+ #    # that we invoke the DebugToolbarExtension
+
+ #    # Do not debug for demo
+ #    app.debug = True
+
+ #    connect_to_db(app)
+
+ #    # Use the DebugToolbar
+ #    DebugToolbarExtension(app)
+
+ #    app.run(host="0.0.0.0")
