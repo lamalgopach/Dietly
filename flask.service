@@ -1,5 +1,5 @@
 [Unit]
-Description=My Awesome Cat App
+Description=Dietly
 After=network.target
 
 [Service]
