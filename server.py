@@ -22,7 +22,7 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPL
 EDAMAM_URL = "https://api.edamam.com/search"
 
 
-@app.route("/home")
+@app.route("/")
 def homepage():
 	"""Show homepage"""
 
@@ -1227,7 +1227,7 @@ def logout():
 
     del session["user_id"]
     flash("Logged Out.")
-    return redirect("/home")
+    return redirect("/")
 
 
 if __name__ == "__main__":
