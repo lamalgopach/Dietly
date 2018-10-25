@@ -1236,7 +1236,8 @@ if __name__ == "__main__":
 	# app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 	# DebugToolbarExtension(app)
 	# connect_to_db(app)
-	app.run(host='0.0.0.0', port=5000)
+	# app.run(host='0.0.0.0', port=5000)
+	app.run()
 
 # if __name__ == "__main__":
  #    # We have to set debug=True here, since it has to be True at the point
