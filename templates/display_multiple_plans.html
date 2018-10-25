@@ -12,7 +12,7 @@
       <div class="row">
         {% for plan in plan_lst %}
           <div class="col-sm">
-            Plan name: <a href="http://0.0.0.0:5000/plans/{{ plan['plan_id'] }}">{{ plan['name'] }}</a> <br>
+            Plan name: <a href="/plans/{{ plan['plan_id'] }}">{{ plan['name'] }}</a> <br>
             Calories: {{ plan['calories'] | round }} kcal<br>
             Carbohydrates: {{ plan['carbohydrates'] | round }}g<br>
             Fat: {{ plan['fat'] | round }}g<br>
