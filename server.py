@@ -22,7 +22,7 @@ EDAMAM_RECIPE_SEARCH_APPLICATION_KEY = os.environ.get('EDAMAM_RECIPE_SEARCH_APPL
 EDAMAM_URL = "https://api.edamam.com/search"
 
 
-@app.route("/")
+@app.route("/home")
 def homepage():
 	"""Show homepage"""
 
