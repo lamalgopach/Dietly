@@ -10,9 +10,8 @@
 
 
 body {
-   background-image: url("cook-food-kitchen-eat-54455.jpeg");
-   background-repeat: repeat-y;
-   height: 120;
+        background: url("/static/cook-food-kitchen-eat-54455.jpeg") no-repeat;
+        background-size: cover;
 }
 
 .white-bg {
